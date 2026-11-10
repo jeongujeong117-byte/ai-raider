@@ -1,0 +1,6 @@
+{
+  "youtube": {"targets": ["https://www.youtube.com/@OpenAI/videos"], "limit": 30},
+  "news": {"targets": ["https://www.aitimes.com/rss/allArticle.xml"], "limit": 100},
+  "huggingface": {"targets": ["models", "datasets", "spaces"], "limit": 30},
+  "gallery": {"targets": ["https://gall.dcinside.com/mgallery/board/lists/?id=ai_utilize"], "limit": 100}
+}

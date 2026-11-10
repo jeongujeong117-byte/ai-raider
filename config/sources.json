@@ -1,0 +1,920 @@
+{
+  "schema_version": 1,
+  "updated_on": "2026-11-09",
+  "timezone": "Asia/Seoul",
+  "collection_window": {
+    "start_date": "2026-08-09",
+    "reference_end_date": "2026-11-09",
+    "end_policy": "freeze_at_first_collection_start"
+  },
+  "selection_status_values": {
+    "selected": "수집 대상",
+    "candidate": "조사 후보"
+  },
+  "accounts": [
+    {
+      "display_name": "에트매거진",
+      "handle": "ai.trend.kr",
+      "url": "https://www.instagram.com/ai.trend.kr/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "프롬왓",
+      "handle": "prompt_what",
+      "url": "https://www.instagram.com/prompt_what/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "리더인",
+      "handle": "leedain_leader_in",
+      "url": "https://www.instagram.com/leedain_leader_in/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "시크아 / 비밀창고 아카이브",
+      "handle": "secret.archive.here",
+      "url": "https://www.instagram.com/secret.archive.here/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "에딧킴 / 지환",
+      "handle": "_edit.kim",
+      "url": "https://www.instagram.com/_edit.kim/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "무드모드",
+      "handle": "moodmode.ai",
+      "url": "https://www.instagram.com/moodmode.ai/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "릴스몬 / 이병철",
+      "handle": "reels_mon01",
+      "url": "https://www.instagram.com/reels_mon01/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "프롬나우",
+      "handle": "prom_now",
+      "url": "https://www.instagram.com/prom_now/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "프롬프롬",
+      "handle": "from__prom",
+      "url": "https://www.instagram.com/from__prom/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "비트저니",
+      "handle": "bitgurny",
+      "url": "https://www.instagram.com/bitgurny/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "토도성문",
+      "handle": "todomoon_",
+      "url": "https://www.instagram.com/todomoon_/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "AI Freaks / 괴짜들",
+      "handle": "ai_freaks.kr",
+      "url": "https://www.instagram.com/ai_freaks.kr/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "누끼토끼",
+      "handle": "nookitokki",
+      "url": "https://www.instagram.com/nookitokki/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "AI 그리고 디자이너 도리",
+      "handle": "ai_dori_",
+      "url": "https://www.instagram.com/ai_dori_/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "신영선의 AI탐구",
+      "handle": "ai.yeongseon",
+      "url": "https://www.instagram.com/ai.yeongseon/",
+      "platform": "instagram",
+      "selection_status": "candidate",
+      "collection_state": "not_started",
+      "selection_basis": "previous_research",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "platform": "instagram",
+      "display_name": "ASAP",
+      "handle": "ai.asap.kr",
+      "url": "https://www.instagram.com/ai.asap.kr/",
+      "topics": [
+        "AI 뉴스",
+        "오픈소스",
+        "연구"
+      ],
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "https://asapai.co.kr/"
+      ]
+    },
+    {
+      "platform": "instagram",
+      "display_name": "에브리 AI",
+      "handle": "every._ai",
+      "url": "https://www.instagram.com/every._ai/",
+      "topics": [
+        "자동화",
+        "에이전트",
+        "비즈니스"
+      ],
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "https://every-ai-guides.vercel.app/posts/claude-ai-delegation-loop-4"
+      ]
+    },
+    {
+      "platform": "instagram",
+      "display_name": "지원쌤",
+      "handle": "jiweon_eng_ai",
+      "url": "https://www.instagram.com/jiweon_eng_ai/",
+      "topics": [
+        "교육·영어"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 입문과 교육 활용",
+      "evidence_urls": [
+        "https://adit.now/lens/channel/jiweon_eng_ai"
+      ],
+      "verification_note": "소개·주제 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "서니쉐어",
+      "handle": "sunyshare",
+      "url": "https://www.instagram.com/sunyshare/",
+      "topics": [
+        "생산성·기록"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI와 디지털 도구로 업무·기록 시스템 만들기",
+      "evidence_urls": [
+        "https://litt.ly/sunyshare/sale/8SPkZz4"
+      ],
+      "verification_note": "운영자 소개 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "리나몬드",
+      "handle": "linamond.insight",
+      "url": "https://www.instagram.com/linamond.insight/",
+      "topics": [
+        "연구·논문"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 도구를 이용한 논문 작성과 연구 아이디어",
+      "evidence_urls": [
+        "https://k-club.kird.re.kr/prog/mentor/career/sub01_02/view.do?mentorCode=MNT_00160049634142Fr"
+      ],
+      "verification_note": "공개 멘토 소개 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "대학원생 클로이",
+      "handle": "chloe_et_al",
+      "url": "https://www.instagram.com/chloe_et_al/",
+      "topics": [
+        "대학원·학술"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "문헌 조사·분석·논문 작성의 AI 활용",
+      "evidence_urls": [
+        "https://pictame.com/en/instagram/chloe_et_al/62205309857"
+      ],
+      "verification_note": "공개 게시물 미러 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "미래코드",
+      "handle": "mirae_code",
+      "url": "https://www.instagram.com/mirae_code/",
+      "topics": [
+        "로봇·미래기술"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI·로봇·우주 분야 기술 소식",
+      "evidence_urls": [
+        "https://adit.now/media/674"
+      ],
+      "verification_note": "채널 소개 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "낭만빌더 김스듴",
+      "handle": "sdk.kim.builds",
+      "url": "https://www.instagram.com/sdk.kim.builds/",
+      "topics": [
+        "업무 자동화"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "개발자가 직접 시험한 AI 자동화와 바이브코딩",
+      "evidence_urls": [
+        "https://adit.now/media/689"
+      ],
+      "verification_note": "채널 소개 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "아이린",
+      "handle": "stayfit_irene",
+      "url": "https://www.instagram.com/stayfit_irene/",
+      "topics": [
+        "1인 개발·창업"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 제품을 만들고 운영하는 과정과 자동화",
+      "evidence_urls": [
+        "https://imginn.com/stayfit_irene/"
+      ],
+      "verification_note": "공개 프로필 미러 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "GO AI 실험실",
+      "handle": "gojaehyun.go",
+      "url": "https://www.instagram.com/gojaehyun.go/",
+      "topics": [
+        "바이브코딩·실험"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "아이디어를 작동하는 작은 프로그램으로 만드는 사례",
+      "evidence_urls": [
+        "https://somako.co.kr/ai-information-insta-account/"
+      ],
+      "verification_note": "한국어 계정 소개 기사 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "노말이",
+      "handle": "normali_tv",
+      "url": "https://www.instagram.com/normali_tv/",
+      "topics": [
+        "노션·1인 사업"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "노션 시스템과 AI를 결합한 개인 업무 운영",
+      "evidence_urls": [
+        "https://imginn.com/normali_tv/"
+      ],
+      "verification_note": "공개 프로필 미러 확인; 최근 AI 게시물 확인 필요"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "지은",
+      "handle": "jay.ai.gtm",
+      "url": "https://www.instagram.com/jay.ai.gtm/",
+      "topics": [
+        "마케팅·제품 기획"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 도구의 실무 적용과 콘텐츠 운영",
+      "evidence_urls": [
+        "https://www.jay.ai.kr/"
+      ],
+      "verification_note": "운영자 사이트 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "에이나우",
+      "handle": "ai.ainow",
+      "url": "https://www.instagram.com/ai.ainow/",
+      "topics": [
+        "AI 활용·트렌드"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "일반 사용자를 위한 AI 정보와 활용",
+      "evidence_urls": [
+        "https://adit.now/lens/channel/ai.ainow"
+      ],
+      "verification_note": "채널 소개 확인; 신영선과 운영 계열 중복 가능"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "AI 픽·부키",
+      "handle": "aipick_bookie",
+      "url": "https://www.instagram.com/aipick_bookie/",
+      "topics": [
+        "뉴스·리뷰"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 이슈·ChatGPT 활용·도구 리뷰",
+      "evidence_urls": [
+        "https://litt.ly/ai_pick"
+      ],
+      "verification_note": "운영자 링크 확인; 주제는 고구마팜 기사와 교차 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "매필녀",
+      "handle": "mapilnyeo",
+      "url": "https://www.instagram.com/mapilnyeo/",
+      "topics": [
+        "자동화·개발"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "ChatGPT 자동화와 AI 코딩 환경 활용",
+      "evidence_urls": [
+        "https://maily.so/mapilnyeo"
+      ],
+      "verification_note": "운영자 뉴스레터 확인"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "AI 원맨",
+      "handle": "ai_oneman",
+      "url": "https://www.instagram.com/ai_oneman/",
+      "topics": [
+        "도구 탐색·업무"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "다양한 업무용 AI 도구 소개",
+      "evidence_urls": [
+        "https://creatordb.app/creatorstats/ai_oneman/"
+      ],
+      "verification_note": "공개 집계 설명 확인; 실제 최근 게시물 추가 점검 필요"
+    },
+    {
+      "platform": "instagram",
+      "display_name": "AI 서대표",
+      "handle": "aiceo_seo",
+      "url": "https://www.instagram.com/aiceo_seo/",
+      "topics": [
+        "기업 도입·AX"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "비즈니스 관점의 AI 활용과 전환",
+      "evidence_urls": [
+        "https://litt.ly/aiceo_seo"
+      ],
+      "verification_note": "운영자 소개 확인"
+    },
+    {
+      "display_name": "Sam Altman",
+      "handle": "sama",
+      "url": "https://x.com/sama",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "OpenAI",
+      "handle": "OpenAI",
+      "url": "https://x.com/OpenAI",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Andrej Karpathy",
+      "handle": "karpathy",
+      "url": "https://x.com/karpathy",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Demis Hassabis",
+      "handle": "demishassabis",
+      "url": "https://x.com/demishassabis",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Andrew Ng",
+      "handle": "AndrewYNg",
+      "url": "https://x.com/AndrewYNg",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Anthropic",
+      "handle": "AnthropicAI",
+      "url": "https://x.com/AnthropicAI",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Google DeepMind",
+      "handle": "GoogleDeepMind",
+      "url": "https://x.com/GoogleDeepMind",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Yann LeCun",
+      "handle": "ylecun",
+      "url": "https://x.com/ylecun",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Clem Delangue",
+      "handle": "ClementDelangue",
+      "url": "https://x.com/ClementDelangue",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Jim Fan",
+      "handle": "DrJimFan",
+      "url": "https://x.com/DrJimFan",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Rowan Cheung",
+      "handle": "rowancheung",
+      "url": "https://x.com/rowancheung",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "AK",
+      "handle": "_akhaliq",
+      "url": "https://x.com/_akhaliq",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Ethan Mollick",
+      "handle": "emollick",
+      "url": "https://x.com/emollick",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Min Choi",
+      "handle": "minchoi",
+      "url": "https://x.com/minchoi",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "display_name": "Simon Willison",
+      "handle": "simonw",
+      "url": "https://x.com/simonw",
+      "platform": "x",
+      "selection_status": "selected",
+      "selection_basis": "user_explicit",
+      "collection_state": "not_started",
+      "evidence_urls": [
+        "research/ACCOUNT-CANDIDATES-2026-11-09.md"
+      ]
+    },
+    {
+      "platform": "x",
+      "display_name": "광파리 김광현",
+      "handle": "kwang82",
+      "url": "https://x.com/kwang82",
+      "topics": [
+        "해외 소식·해설"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI·글로벌 기술 소식을 한국어로 전달",
+      "evidence_urls": [
+        "https://blog.x.com/ko/company/1-kwang82"
+      ],
+      "verification_note": "핸들과 실명은 X 공식 인터뷰 확인; 최근 AI 비중은 별도 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "구루",
+      "handle": "xguru",
+      "url": "https://x.com/xguru",
+      "topics": [
+        "뉴스·오픈소스"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 도구·에이전트·개발 관련 소식",
+      "evidence_urls": [
+        "https://www.sotwe.com/xguru"
+      ],
+      "verification_note": "공개 한국어 AI 게시물 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "GeekNews",
+      "handle": "GeekNewsHada",
+      "url": "https://x.com/GeekNewsHada",
+      "topics": [
+        "뉴스 큐레이션"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI·개발 소식과 원문 연결",
+      "evidence_urls": [
+        "https://news.hada.io/"
+      ],
+      "verification_note": "공식 사이트의 X 링크와 AI 기사 확인; xguru와 동일 운영 계열"
+    },
+    {
+      "platform": "x",
+      "display_name": "지디넷코리아",
+      "handle": "zdnetkorea",
+      "url": "https://x.com/zdnetkorea",
+      "topics": [
+        "산업·제품 뉴스"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "국내 AI 제품·정책·기업 소식",
+      "evidence_urls": [
+        "https://zdnet.co.kr/news/?lstcode=hit&page="
+      ],
+      "verification_note": "AI 기사 확인; X 핸들은 공개 디렉터리 확인; 종합 기술 매체"
+    },
+    {
+      "platform": "x",
+      "display_name": "버섯돌이 김태현",
+      "handle": "mushman1970",
+      "url": "https://x.com/mushman1970",
+      "topics": [
+        "AI 산업·스타트업"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 도입 사례와 사업·제품 소식",
+      "evidence_urls": [
+        "https://www.twstalker.com/mushman1970"
+      ],
+      "verification_note": "한국어 AI 기사 공유 게시물 확인; 스타트업 일반 소식 혼합"
+    },
+    {
+      "platform": "x",
+      "display_name": "윤석찬",
+      "handle": "channyun",
+      "url": "https://x.com/channyun",
+      "topics": [
+        "클라우드·기업 활용"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "생성형 AI·클라우드·업무 도입 사례",
+      "evidence_urls": [
+        "https://w.twstalker.com/channyun"
+      ],
+      "verification_note": "한국어 생성형 AI 게시물 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "안수빈",
+      "handle": "subinium",
+      "url": "https://x.com/subinium",
+      "topics": [
+        "AI 개발·실험"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 코딩 도구와 에이전트 실험",
+      "evidence_urls": [
+        "https://github.com/subinium"
+      ],
+      "verification_note": "운영자 공개 코드와 소셜 미러 교차 확인; 한국어·영어 혼합"
+    },
+    {
+      "platform": "x",
+      "display_name": "골빈해커",
+      "handle": "golbin",
+      "url": "https://x.com/golbin",
+      "topics": [
+        "AI 도구·제품 개발"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "직접 만든 AI 도구와 실사용 기록",
+      "evidence_urls": [
+        "https://nitter.cf/golbin"
+      ],
+      "verification_note": "한국어 AI 개발·제품 게시물 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "말러팔삼",
+      "handle": "mahler83",
+      "url": "https://x.com/mahler83",
+      "topics": [
+        "연구·실사용"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "연구용 LLM과 AI 코딩·개인 도구 실험",
+      "evidence_urls": [
+        "https://teapawt.org/mahler83"
+      ],
+      "verification_note": "한국어 실사용 게시물과 LLM 강의 소개 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "Move78",
+      "handle": "move78th",
+      "url": "https://x.com/move78th",
+      "topics": [
+        "모델·업계 해설"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 모델 동향과 워크플로 정보",
+      "evidence_urls": [
+        "https://ww.twstalker.com/move78th"
+      ],
+      "verification_note": "한국어 AI 게시물 확인; 투자·가상자산 내용 혼합"
+    },
+    {
+      "platform": "x",
+      "display_name": "크롱",
+      "handle": "Krongggggg",
+      "url": "https://x.com/Krongggggg",
+      "topics": [
+        "AI 소식·사용기"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 기술·서비스·실험에 대한 정보",
+      "evidence_urls": [
+        "https://teapawt.net/Krongggggg"
+      ],
+      "verification_note": "AI 중심 소개와 한국어 게시물 확인; 기타 주제 혼합"
+    },
+    {
+      "platform": "x",
+      "display_name": "김병준",
+      "handle": "DrByungjunKim",
+      "url": "https://x.com/DrByungjunKim",
+      "topics": [
+        "학술·에이전트"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "연구자의 AI 활용과 새 도구 정보",
+      "evidence_urls": [
+        "https://xitter.cf/DrByungjunKim"
+      ],
+      "verification_note": "한국어 AI 에이전트 게시물 확인; 운영자 프로필은 Hugging Face와 교차 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "승귤",
+      "handle": "wapj2000",
+      "url": "https://x.com/wapj2000",
+      "topics": [
+        "AI 에이전트 개발"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "에이전트·회의록·업무 도구 구현 경험",
+      "evidence_urls": [
+        "https://testing-when.twstalker.com/wapj2000"
+      ],
+      "verification_note": "한국어 개발 사례와 에이전트 도서 소개 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "유저스틴",
+      "handle": "justinchronicle",
+      "url": "https://x.com/justinchronicle",
+      "topics": [
+        "개발 교육·활용법"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "생성형 AI·RAG·프롬프트 활용과 개발 교육",
+      "evidence_urls": [
+        "https://techcommunity.microsoft.com/event/dotnetevents/korean-lets-learn-net---generative-ai/3926515"
+      ],
+      "verification_note": "Microsoft 한국어 교육 자료와 X 프로필 교차 확인"
+    },
+    {
+      "platform": "x",
+      "display_name": "전종홍",
+      "handle": "hollobit",
+      "url": "https://x.com/hollobit",
+      "topics": [
+        "연구·의료 AI·표준"
+      ],
+      "selection_status": "candidate",
+      "selection_basis": "additional_research",
+      "collection_state": "not_started",
+      "information_focus": "AI 연구·평가·의료 분야와 표준 관련 정보",
+      "evidence_urls": [
+        "https://github.com/hollobit"
+      ],
+      "verification_note": "운영자 연구·학습 분야 확인; 최근 X 게시물 활동은 추가 확인 필요"
+    }
+  ]
+}

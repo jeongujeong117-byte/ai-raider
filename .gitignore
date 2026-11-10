@@ -1,0 +1,10 @@
+.venv/
+.uv-cache/
+__pycache__/
+*.egg-info/
+data/
+.private/
+.env
+*.session
+*.sqlite*
+*.db*

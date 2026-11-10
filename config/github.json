@@ -1,0 +1,17 @@
+{
+  "queries": [
+    "topic:artificial-intelligence",
+    "topic:llm",
+    "topic:ai-agents",
+    "topic:mcp",
+    "\"agent skills\" in:name,description,readme",
+    "\"claude skills\" in:name,description,readme",
+    "\"AI\" \"marketing\" in:description,readme",
+    "\"AI\" \"automation\" in:description,readme"
+  ],
+  "min_stars": 1000,
+  "limit_per_query": 100,
+  "archive_mb": 512,
+  "download_archive": true,
+  "categories": {"computing": "컴퓨팅 기술", "practice": "분야별 실무 활용"}
+}
