@@ -2,8 +2,8 @@
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
-| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | PASS·develop 병합 완료, S3 설명 작성 중 | develop (개발 c4783ac, QA ccec489) | 0 |
-| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium | 개발 중 | jeongujeong117-byte/t-001-dev | 0 |
+| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity → S3 Sonnet low | PASS·develop 병합 완료, S3 문서 수락 | develop (개발 c4783ac, QA ccec489, 문서 39a088f) | 0 |
+| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | S1 완료·S2 배정 준비 | jeongujeong117-byte/t-001-dev | 0 |
 | T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium | 개발 중 | jeongujeong117-byte/t-002-dev | 0 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 작성·검증 중 | jeongujeong117-byte/t-003-qa | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
@@ -65,3 +65,8 @@
 | T-000 S3 | task_52e790216fee | ctx_27a2331b1591 | claude-sonnet-5-5 / low | t-000-learn |
 
 모두 develop/a7746db 기반 자식 워크트리에서 ready 확인. 4개 동시 워커, S1 2개는 허용 파일 비중복. 이전 T-000 S1은 already_released, S2는 released 확인. S3 브랜치는 jeongujeong117-byte/t-000-learn. 결과는 Orca 메시지로 수신한다.
+
+## 후속 수신
+
+- T-000 학습 문서: 39a088f 수락. 첫 보고의 마이그레이션·OCR 사유·시점 표현은 S0 요청으로 수정 후 확인. follow-up dispatch ctx_8e9cb742cb62, Task task_d3ba05853903.
+- T-001 개발: 7c51734, 허용 3개 파일만 변경 및 clean 확인. 기존 50→66개 회귀 및 블랙박스 7개 통과 보고. 실제 수집기/대시보드/Edge 연결·동일 state_path 동시 작성은 범위 밖. 독립 QA는 handoff/specs/T-001-qa.md 기준.
