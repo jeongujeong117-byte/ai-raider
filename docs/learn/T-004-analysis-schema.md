@@ -4,10 +4,11 @@
 
 ## 0. 먼저 알아둘 경계 (가장 중요)
 
-- T-004의 지식 사전 `config/known_concepts.json`에 든 12개(transformer, lora, agent …)는 **합성 초안**(`provenance: initial_synthetic_draft`)입니다. **사용자가 아는 개념이 아닙니다.**
-- 사용자 답변(DECISIONS D-015 확정 절)으로 **실제 기지식 5개**가 확정됐습니다: 환각, 프롬프트 엔지니어링, 컨텍스트 윈도우, RAG, 임베딩. 수준은 "기초 완료, 중급 초입".
-- 이 5개를 config에 반영하고 alias(영문 표기 등)를 다루는 일은 **후속 T-006에서 진행 예정**입니다. 이 브랜치의 config는 아직 합성 12개입니다(T-006 반영 여부는 이 문서 작성 시점에 확인 안 됨).
-- "신개념에 쉬운 한국어 뜻풀이를 붙이는 기능"은 후속 T-011/T-012 예정입니다. **지금 코드에는 뜻풀이 생성이 없습니다.**
+이 문서는 **T-004 시점의 설명**(역사)에 최신 변경(T-006, develop 38f911b로 통합)을 덧붙여 갱신한 것입니다. 시점을 구분해 읽으세요.
+
+- **T-004 시점(과거)**: `config/known_concepts.json`에 합성 12개(transformer, lora, agent …, `provenance: initial_synthetic_draft`)가 들어 있었고, 이는 **사용자 지식이 아니었습니다.**
+- **현재(develop, T-006 통합 후)**: config는 사용자가 확정한 **5개**(환각, 프롬프트 엔지니어링, 컨텍스트 윈도우, RAG, 임베딩)와 `aliases`, `provenance: "user_confirmed"`입니다. 합성 12개는 config에서 빠져 `tests/blackbox/fixtures/gold_samples.json`에 테스트 자료로만 보존됩니다. 자세한 내용은 `docs/learn/T-006-known-concepts.md`.
+- 자동 신개념 후보 추출과 쉬운 한국어 뜻풀이 생성은 **후속 T-011/T-012 예정**이며 현재 코드에는 없습니다.
 - 이 코드가 증명하는 것은 "JSON의 모양과 내부 규칙이 맞는가"뿐입니다. **LLM 성능, 자연어 전체의 의미, 한국어 뜻풀이 품질은 검증된 바 없습니다.**
 
 ## 1. JSON 계약이란?
@@ -56,7 +57,7 @@ LLM이 분석 결과를 내놓으면 "이런 칸이 있고, 이런 값만 넣을
 ## 7. 파일과 공개 API 예시
 
 - `core/analysis_schema.py`: 모델·검증기. import만으로 파일 읽기/쓰기/네트워크 없음.
-- `config/known_concepts.json`: 현재 합성 12개 초안(T-006에서 사용자 5개로 교체 예정).
+- `config/known_concepts.json`: T-004 시점엔 합성 12개 초안, **현재는 사용자 확정 5개+aliases**(T-006).
 - `tests/test_analysis_schema.py`(S1 단위 47개), `tests/blackbox/test_t004_analysis_schema.py`(S2 블랙박스 21개).
 
 ```python
@@ -67,7 +68,9 @@ result = AnalysisResult.model_validate_json(json_text)      # 모양·원문근�
 result.validate_known_concepts(known)                       # 별도 호출: 이미 아는 단어를 신개념으로 썼나
 ```
 
-spec 예시(READY gallery): `source_text='transformer 어텐션 실습'`, `evidence_terms=['transformer','어텐션']`, `new_concepts_detected=['어텐션']` → 원문에 있고 부분집합이라 통과, 단 합성 사전에 `어텐션`이 없어야 사전 대조도 통과.
+spec 예시(READY gallery, T-004 시점): `source_text='transformer 어텐션 실습'`, `new_concepts_detected=['어텐션']` → 원문에 있고 부분집합이라 통과, 사전에 `어텐션`이 없으면 사전 대조도 통과. (`transformer`는 당시 합성 사전 항목이었고 현재 사용자 사전에는 없습니다.)
+
+현재 `validate_known_concepts`는 canonical뿐 아니라 alias(예: `hallucination`)도 "이미 아는 단어"로 거부합니다(T-006).
 
 ## 8. 숫자는 시점마다 다릅니다 (합산하지 마세요)
 
@@ -77,14 +80,17 @@ spec 예시(READY gallery): `source_text='transformer 어텐션 실습'`, `evide
 | 개발 브랜치, 완료 후 | 178개 (신규 47) | 개발 보고 |
 | QA 브랜치 | 199개(기본 환경 skip 11, extras 포함 skip 0) | QA 보고 |
 | 병합 df7c360 이후 | 199개, skip 0 | BOARD(S0 재실행) |
+| T-006 통합 38f911b 이후(현재) | 231개, skip 0, exit 0 | BOARD/DECISIONS D-019(S0 병합 전후 확인) |
 
-각 줄은 서로 다른 시점의 전체 합계이며 더하면 안 됩니다. T-005의 164개는 T-004가 합쳐지지 않은 다른 브랜치 수치입니다. 이 문서 작성 중에는 테스트를 다시 돌리지 않았습니다.
+T-006 QA 보고 기준 231개 = 블랙박스 81 + 단위 150(extras 없는 기본 환경은 skip 11).
+
+각 줄은 서로 다른 시점의 전체 합계이며 더하면 안 됩니다. T-005의 164개는 T-004가 합쳐지지 않은 다른 브랜치 수치입니다. 이 문서 갱신 중에는 테스트를 다시 돌리지 않았습니다.
 
 ## 9. 지금까지 검증된 것 / 아닌 것
 
 - 검증됨(보고 기준): 모양·타입·교차 규칙이 합성 테스트 데이터에서 의도대로 동작.
-- gold 검증: 합성 gold 샘플의 `known_concepts`와 config 초안의 집합 일치. gold의 `expected.analysis`는 부분 정답이라 새 JSON 틀로 파싱된다고 주장하지 않음.
-- **확인 안 됨**: 실제 분석 모델(LLM)이 이 틀에 맞는 JSON을 안정적으로 내는지, 분류 정확도, 문장 의미 근거성, 한국어 뜻풀이 품질, 사용자 5개 반영 후 동작.
+- gold 검증(T-004 시점): 합성 gold 샘플의 `known_concepts`와 당시 config 초안의 집합 일치. T-006 이후 이 "동등 테스트"는 사용자 5개 검사로 교체되고 합성 12개는 fixture에서 별도 모델로만 검증됩니다. gold의 `expected.analysis`는 부분 정답이라 새 JSON 틀로 파싱된다고 주장하지 않음.
+- **확인 안 됨**: 실제 분석 모델(LLM)이 이 틀에 맞는 JSON을 안정적으로 내는지, 분류 정확도, 문장 의미 근거성, 한국어 뜻풀이 품질, 실제 글에서 신개념을 자동으로 뽑는 기능(T-011/T-012 예정).
 
 ## 서술형 문제
 
@@ -96,4 +102,4 @@ spec 예시(READY gallery): `source_text='transformer 어텐션 실습'`, `evide
 
 1. 파이썬에서 `True == 1`, `1.0 == 1`이라 `Literal[1]`이 이를 통과시킵니다(개발자가 실측). 그래서 `_exact_int`가 `type(value) is int`일 때만 허용하도록 BeforeValidator를 붙였습니다. bool·float·숫자 문자열 모두 거부됩니다.
 2. HOLD는 아직 분석하지 못한 보류(예: 본문 비고 OCR 대기)로 `hold_reason` 필수, 분석 칸 전부 비움, `event_id=null`, `is_pure_noise=false`여야 합니다. 순수 잡담은 READY로 분석을 마쳤으나 배울 개념이 없는 글로 `is_pure_noise=true`이고 근거 단어·신개념·활용·아이디어 4칸이 비어야 합니다(요약·태그는 허용).
-3. 원문 검사는 결과 하나로 판단되지만 사전 대조는 외부 사전(누구의 지식인지)이 있어야 해서 `validate_known_concepts(known)`로 분리했습니다. 통과해도 확인 안 되는 것: 요약·`concept_usage` 같은 문장 전체의 의미적 근거성, 실제 LLM의 분류 정확도·한국어 뜻풀이 품질(그 밖에 현재 사전이 합성 12개라 사용자 실제 지식 5개 기준 동작도 T-006 전까지 확인 안 됨).
+3. 원문 검사는 결과 하나로 판단되지만 사전 대조는 외부 사전(누구의 지식인지)이 있어야 해서 `validate_known_concepts(known)`로 분리했습니다. 통과해도 확인 안 되는 것: 요약·`concept_usage` 같은 문장 전체의 의미적 근거성, 실제 LLM의 분류 정확도·한국어 뜻풀이 품질(그 밖에 자동 신개념 추출·뜻풀이는 후속 단계라 아직 없음).
