@@ -6,9 +6,10 @@
 | T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 140fcdf, QA 0f0b8cb) | 1 |
 | T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 6a64b95, QA be22c81, 병합 c647843/b67a261) | 1 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
-| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | S1 651cb84 완료・S2 QA 진행 | jeongujeong117-byte/t-004-dev / t-004-qa | 0 |
+| T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 ready・개발 중 | jeongujeong117-byte/t-005-dev | 0 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 0b7b045 완료・독립 QA 배정 준비 | jeongujeong117-byte/t-005-dev | 0 |
+| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | spec 작성・배정 준비 | 예정 t-006-dev | 0 |
 | S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 1차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
@@ -116,3 +117,9 @@
 - T-004 QA ctx_1c08dcaa27b0 유지, 중단/재시작 없음. 완료된 S1 ctx_6f941cb32864는 released/processAction=closed_agent_terminal 확인.
 - S4 1차 5cf6389 수락・로그 develop 병합. 관측 당시 BOARD 배정 지연은 e75dae0에서 해결. t-004-qa 미추적 테스트는 QA 진행 중 산출물로 최종 보고 시 확인. T-002 완료 retained/unverifiable은 worker-show 재확인, 생존 불명으로 자동 종료하지 않음. T-001 QA 합산 혼동 가능성은 과거 보고 이슈로 분리하며 현재 전체131개와 합산하지 않음.
 - 사용자 D-013 지식 답변 수신: 실제 기지식5개 확정. T-006에서 config 갱신, T-011/T-012에서 신개념 쉬운 한국어 뜻풀이 구현. T-004 QA 계약/프로세스는 유지.
+
+## T-004 수락 및 T-005 QA 전환
+
+- T-004 QA a5d63c2 허용2개 파일만 변경・clean. 기본199개 OK(skip11), extras199개 OK(skip0)는 QA 보고. S0가 QA 브랜치 extras199개 재실행 exit0, df7c360 병합 후 동일199개/skip0/exit0 확인(12.408초).
+- T-004/T-005 완료 워커 released 확인. T-005 0b7b045 허용3개 변경・clean, S1 164개(skip11) 보고는 T-004 미포함 브랜치 수치.
+- T-006의 config/초기config검사 변경은 사용자 승인 계약 갱신이다. 신개념 뜻풀이 생성은 후속 T-011/T-012에 유지.
