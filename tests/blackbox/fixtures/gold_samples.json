@@ -47,7 +47,8 @@
         "in_window": true,
         "analysis": {
           "category": "tutorial",
-          "evidence_terms": ["Vision Transformer", "ViT", "fine-tuning"],
+          "evidence_terms": ["ViT", "transformer", "fine-tuning"],
+          "new_concepts_detected": [],
           "is_pure_noise": false,
           "notes": "Explicit educational guide on vision transformer adaptation."
         }
@@ -81,6 +82,7 @@
         "analysis": {
           "category": "model_release",
           "evidence_terms": ["Diffusion", "checkpoint"],
+          "new_concepts_detected": [],
           "is_pure_noise": false,
           "notes": "Announcement of model weights checkpoint update."
         }
@@ -122,6 +124,7 @@
         "analysis": {
           "category": "unclassified_media",
           "evidence_terms": [],
+          "new_concepts_detected": [],
           "is_pure_noise": false,
           "notes": "Media-only post requiring downstream vision OCR/classification."
         }
@@ -165,6 +168,7 @@
         "analysis": {
           "category": "tutorial",
           "evidence_terms": ["RAG", "vector_db"],
+          "new_concepts_detected": [],
           "is_pure_noise": false,
           "notes": "RAG pipeline explanation grounded in title and spoken transcript."
         }
@@ -183,7 +187,8 @@
         "posted_at": "2026-08-20T04:30:00+00:00",
         "text": "AI Semiconductor Startup Reveals Low-Power Edge NPU Architecture.",
         "metrics": {
-          "reads": 450
+          "reads": 450,
+          "likes": 88
         },
         "media": [
           {
@@ -196,15 +201,16 @@
       },
       "expected": {
         "dedup_key": "news:news-synth-005",
-        "preserve_null_metrics": true,
-        "expected_likes": null,
+        "preserve_null_metrics": false,
+        "expected_likes": 88,
         "stored_text": "AI Semiconductor Startup Reveals Low-Power Edge NPU Architecture.",
         "in_window": true,
         "analysis": {
           "category": "hardware",
           "evidence_terms": ["NPU", "Semiconductor"],
+          "new_concepts_detected": ["Semiconductor"],
           "is_pure_noise": false,
-          "notes": "Hardware chip architecture news grounded in headline and OCR infographic."
+          "notes": "Hardware chip architecture news grounded in headline and OCR infographic; Semiconductor is not in known_concepts."
         }
       }
     },
@@ -221,7 +227,8 @@
         "posted_at": "2026-08-08T14:59:59+00:00",
         "text": "Gallery submission prior to benchmark window boundary.",
         "metrics": {
-          "views": 5
+          "views": 5,
+          "likes": null
         },
         "media": [],
         "raw": {}
@@ -237,6 +244,7 @@
         "analysis": {
           "category": "pure_noise",
           "evidence_terms": [],
+          "new_concepts_detected": [],
           "is_pure_noise": true,
           "notes": "General submission without tech content; outside target evaluation window."
         }
@@ -255,7 +263,8 @@
         "posted_at": "2026-08-08T15:00:00+00:00",
         "text": "Gallery submission exactly on benchmark window start boundary.",
         "metrics": {
-          "views": 10
+          "views": 10,
+          "likes": null
         },
         "media": [],
         "raw": {}
@@ -271,6 +280,7 @@
         "analysis": {
           "category": "pure_noise",
           "evidence_terms": [],
+          "new_concepts_detected": [],
           "is_pure_noise": true,
           "notes": "Boundary test fixture for inclusive window start."
         }
@@ -289,7 +299,8 @@
         "posted_at": "2026-08-08T15:00:01+00:00",
         "text": "Gallery submission immediately after benchmark window start boundary.",
         "metrics": {
-          "views": 12
+          "views": 12,
+          "likes": null
         },
         "media": [],
         "raw": {}
@@ -305,6 +316,7 @@
         "analysis": {
           "category": "pure_noise",
           "evidence_terms": [],
+          "new_concepts_detected": [],
           "is_pure_noise": true,
           "notes": "Boundary test fixture immediately inside window start."
         }
@@ -338,8 +350,9 @@
         "analysis": {
           "category": "model_release",
           "evidence_terms": ["weights"],
+          "new_concepts_detected": ["weights"],
           "is_pure_noise": false,
-          "notes": "Initial release weights announcement."
+          "notes": "Initial release weights announcement; weights is not in known_concepts."
         }
       }
     },
@@ -372,8 +385,9 @@
         "analysis": {
           "category": "model_release",
           "evidence_terms": ["weights", "checkpoint"],
+          "new_concepts_detected": ["weights"],
           "is_pure_noise": false,
-          "notes": "Updated checkpoint release for existing repository."
+          "notes": "Updated checkpoint release for existing repository; checkpoint is known, weights is new."
         }
       }
     },
@@ -395,22 +409,24 @@
         },
         "metrics": {
           "stars": 42,
-          "forks": 8
+          "forks": 8,
+          "likes": 42
         },
         "media": [],
         "raw": {}
       },
       "expected": {
         "dedup_key": "github:gh-synth-010",
-        "preserve_null_metrics": true,
-        "expected_likes": null,
+        "preserve_null_metrics": false,
+        "expected_likes": 42,
         "in_window": true,
         "expanded_min_length": 10000,
         "analysis": {
           "category": "code_repository",
           "evidence_terms": ["LoRA", "fine-tuning", "agent"],
+          "new_concepts_detected": [],
           "is_pure_noise": false,
-          "notes": "Source code repository for fine-tuning scripts."
+          "notes": "Source code repository for fine-tuning scripts; all concepts known."
         }
       }
     },
@@ -449,6 +465,7 @@
         "analysis": {
           "category": "pure_noise",
           "evidence_terms": [],
+          "new_concepts_detected": [],
           "is_pure_noise": true,
           "notes": "Error test probe; non-technical content."
         }
@@ -480,7 +497,9 @@
         "in_window": true,
         "analysis": {
           "category": "practical_experiment",
-          "evidence_terms": ["transformer"],
+          "evidence_terms": ["transformer", "어텐션"],
+          "new_concepts_detected": ["어텐션"],
+          "applied_usage": "transformer 어텐션 메커니즘 코드를 실습",
           "is_pure_noise": false,
           "notes": "Casual chatter containing real tech experimentation explicitly grounded in source text."
         }
@@ -513,8 +532,43 @@
         "analysis": {
           "category": "pure_noise",
           "evidence_terms": [],
+          "new_concepts_detected": [],
           "is_pure_noise": true,
           "notes": "Pure chatter with zero tech content; ground truth confirms is_pure_noise without hallucinated concepts."
+        }
+      }
+    },
+    {
+      "id": "sample-x-new-concept-and-idea",
+      "description": "Casual chatter on X introducing a novel concept outside known_concepts with applied practical idea.",
+      "provenance": "synthetic",
+      "tags": ["x", "chatter_tech", "new_concepts", "practical_idea"],
+      "input": {
+        "platform": "x",
+        "post_id": "x-synth-015",
+        "handle": "research_watcher",
+        "url": "https://example.com/x/status/x-synth-015",
+        "posted_at": "2026-09-25T05:00:00+00:00",
+        "text": "친구들과 카페에서 수다 떨다가 flash_attention 최적화 기법을 온디바이스 agent에 적용하는 아이디어를 떠올림.",
+        "metrics": {
+          "likes": 8
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "x:x-synth-015",
+        "preserve_null_metrics": false,
+        "expected_likes": 8,
+        "stored_text": "친구들과 카페에서 수다 떨다가 flash_attention 최적화 기법을 온디바이스 agent에 적용하는 아이디어를 떠올림.",
+        "in_window": true,
+        "analysis": {
+          "category": "practical_experiment",
+          "evidence_terms": ["agent", "flash_attention"],
+          "new_concepts_detected": ["flash_attention"],
+          "applied_usage": "flash_attention 최적화 기법을 온디바이스 agent에 적용하는 아이디어",
+          "is_pure_noise": false,
+          "notes": "Casual chatter with novel practical idea; flash_attention is not in known_concepts so detected as new concept."
         }
       }
     }
