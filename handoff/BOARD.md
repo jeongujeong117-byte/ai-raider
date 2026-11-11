@@ -4,9 +4,10 @@
 |---|---|---|---|---|---|
 | T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity → S3 Sonnet low | PASS·develop 병합 완료, S3 문서 수락 | develop (개발 c4783ac, QA ccec489, 문서 39a088f) | 0 |
 | T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 140fcdf, QA 0f0b8cb) | 1 |
-| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | 1차 반려 수정 6a64b95·QA 재검증 중 | jeongujeong117-byte/t-002-dev | 1 |
+| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 6a64b95, QA be22c81, 병합 c647843/b67a261) | 1 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
-| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
+| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | 선행 작업 완료·spec 작성, 학습 문서 정정 수락 후 배정 | 예정 t-004-dev | 0 |
+| 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | fc27059 검토·수치 시점 정정 요청 예정, 미병합 | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
 
 ## 운영
@@ -88,3 +89,12 @@
 - T-003 ff69a03 수락: 15개 합성 사례·12개 신규 테스트. S0가 전체 69개/blackbox 19개 재실행 후 develop 병합, 병합 뒤 동일 검증 통과.
 - T-001 S0가 QA 워크트리에서 전체 68개/blackbox 18개 재실행 후 개발·QA를 develop 병합. T-003 포함 develop 전체 98개/blackbox 30개 모두 exit 0.
 - S3 T-001/T-003 설명 명세: handoff/specs/T-001-T-003-learn.md. T-004는 T-002 수락·병합까지 대기.
+
+## 2026-11-12 전원 차단 후 감사
+
+- 전체 12개 등록 Git 워크트리 status --short 출력 없음(clean). develop HEAD b67a261. master 변경 없음.
+- T-002는 c647843 및 b67a261로 이미 통합됐고 be22c81 최종 PASS를 확인했다. 위 표의 재검증 중 표기를 정정했다.
+- Run run_548a284d59da task-list에서 학습 Task task_fbff03cee131도 completed, dispatch ctx_253771f3d032는 succeeded다. 재개 지시 작성 당시 dispatched 상태와 달라졌다. 이전 작업이 계속 실행 중이라고 해석하지 않는다.
+- failed Task task_6ee8fa23c2ad는 최초 PASS를 FAIL로 정정한 이력이다. 후속 task_1bfa2b9e91e2 completed로 해결됐으므로 재시도하지 않는다.
+- fc27059 변경은 지정 docs/learn 문서 두 개뿐. T-003 머리말의 69개/19개가 '보완 전'이라는 설명은 QA 보고서와 달라 수락 보류한다.
+- 첫 send는 consumer_fenced로 거절됨(전달 안 됨). run-use --id run_548a284d59da 성공으로 현재 지휘관 연결을 복구했다. 중복 워커를 시작하지 않았다.

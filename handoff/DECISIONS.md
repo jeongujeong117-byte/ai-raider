@@ -45,3 +45,15 @@ S1의 1차 반려 수정 커밋 140fcdf를 받았다. 모델은 Sonnet medium �
 ## D-008 · 2026-11-11 · T-001 및 T-003 수락
 
 T-001 수정 140fcdf/QA 0f0b8cb는 원본 FAIL 이력을 보존하고 기대값 완화 없이 PASS했다. S0가 재검증 후 develop에 병합했다. T-003은 URL hostname 검증·전체 기대값·지식 사전 기준안 연결 보완본 ff69a03을 재검증 후 수락·병합했다. 분석 정답은 초기 합성 기준안이며 실제 LLM 성능을 입증하지 않는다. 통합 상태에서 전체 98개 및 blackbox 30개 exit 0. T-001의 기존 수집기·대시보드·실제 Edge 연결은 아직 후속 통합이다.
+
+## D-009 · 2026-11-12 · 복구 감사
+
+T-002는 최종 수정 6a64b95/QA be22c81 PASS 후 c647843・b67a261로 이미 develop에 병합됐다. BOARD의 재검증 중 기록을 정정했다. failed Task task_6ee8fa23c2ad는 원본의 잘못된 PASS를 FAIL로 정정한 이력이며, 후속 task_1bfa2b9e91e2 completed로 해결되어 재시도 대상이 아니다.
+
+모든 등록 Git 워크트리 12개의 status가 clean이다. 학습 Task task_fbff03cee131는 현재 completed/dispatch succeeded로 조회됐다. fc27059 문서 두 개를 검토했으나 T-003 69개/19개가 보완 전 수치라는 문구는 보완 후 QA 보고와 달라 정정을 요청한 뒤 수락한다. 첫 send는 consumer_fenced로 전달되지 않았고 run-use로 기존 Run 지휘관 연결을 복구했다.
+
+orca account list에서 Antigravity 활성 계정 jeongujeong117@gmail.com을 확인했다. 계정 보관 파일은 읽지 않았다. T-004 QA 첫 응답/모델 정상 작동은 아직 확인 못 함이며 실제 QA 시작 시 검증한다. 과거 worker의 unverifiable liveness는 실행 중/종료 어느 쪽의 증거로도 쓰지 않는다.
+
+## D-010 · 2026-11-12 · T-004의 경계
+
+T-004는 Sonnet 5.5/high로 분석 JSON 계약과 합성 기반 지식 사전 초안을 만든다. READY/HOLD와 잡담 판정을 구분하고 원문 내 개념 근거 및 사전 대조를 명시한다. 기존 합성 gold를 사용자 지식이나 모델 정확도 증거로 승격하지 않는다. LLM 프롬프트/평가 설계・DB 이력・MCP 쓰기・수집기 연결은 별도 spec으로 분리한다.
