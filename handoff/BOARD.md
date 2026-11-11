@@ -3,9 +3,9 @@
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
 | T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity → S3 Sonnet low | PASS·develop 병합 완료, S3 문서 수락 | develop (개발 c4783ac, QA ccec489, 문서 39a088f) | 0 |
-| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 1차 반려 수정 140fcdf 도착·QA 재검증 요청 | jeongujeong117-byte/t-001-dev | 1 |
-| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-002-dev | 0 |
-| T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 1차 완료 보고·S0 수락 보완 요청 | jeongujeong117-byte/t-003-qa | 0 |
+| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 140fcdf, QA 0f0b8cb) | 1 |
+| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | 1차 반려 수정 6a64b95·QA 재검증 중 | jeongujeong117-byte/t-002-dev | 1 |
+| T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
 
@@ -79,3 +79,12 @@
 - T-003 보완 Task task_95e9eb7d8090 / dispatch ctx_badfc7406e20, 동일 워크트리·Antigravity 자체 설정으로 ready 확인.
 - T-001: S2의 7c51734 PASS는 S0가 미수락. stop 후 fallback 실행, 복원된 임의 reason 노출을 임시 입력으로 직접 재현해 1차 반려. QA 정정 Task task_f96d2d5a539c / dispatch ctx_c96c105bd2f0, S1 수정 Task task_ca9aabb4ff9d / dispatch ctx_90cd73058b26.
 - T-001 수정 140fcdf 도착: 중단 직전 검사·고정 reason 복원 검증, 신규 회귀 2개 추가(개발 전체 68개+블랙박스 7개 통과 보고). S0가 diff 확인 후 QA에 최초 FAIL 증거 보존 및 같은 브랜치에서 140fcdf 재검증을 send. 아직 develop 미병합.
+
+## 최신 수락 및 재검증
+
+- T-002 원본 1d65fa4의 QA PASS 미수락. S0 실제 stdio 재현으로 bool/수치 문자열 coercion 확인 후 1차 반려. S2 정정 FAIL e443091, 수정 S1 6a64b95(StrictInt/StrictStr와 실제 SDK 회귀) 도착.
+- T-002 S1 보완 Task task_429cdad2bf17 / dispatch ctx_35631755d212 완료. S2 정정 Task task_6ee8fa23c2ad / dispatch ctx_fd31bc95174d FAIL 보고 후, 재검증 Task task_1bfa2b9e91e2 / dispatch ctx_c64264f2869c 진행 중.
+- T-001 QA 최초 FAIL 0f58417, 수정본 PASS 0f0b8cb 수신. 후속 Task task_3c6f23087de7 / dispatch ctx_011cad965adc worker_done succeeded 확인. startup 관측 지연 알림은 있었으나 실제 작업 진행 및 최종 보고 확인, 중복 시작하지 않음.
+- T-003 ff69a03 수락: 15개 합성 사례·12개 신규 테스트. S0가 전체 69개/blackbox 19개 재실행 후 develop 병합, 병합 뒤 동일 검증 통과.
+- T-001 S0가 QA 워크트리에서 전체 68개/blackbox 18개 재실행 후 개발·QA를 develop 병합. T-003 포함 develop 전체 98개/blackbox 30개 모두 exit 0.
+- S3 T-001/T-003 설명 명세: handoff/specs/T-001-T-003-learn.md. T-004는 T-002 수락·병합까지 대기.
