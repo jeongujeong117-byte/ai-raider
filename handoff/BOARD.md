@@ -141,3 +141,4 @@
 - T-005 QA76ab0b5 및S0 QA브랜치184개/skip0/exit0 확인후67c8961 통합. 통합전체284개는1error/1failure로exit1. 실제CLI프로브도cp949 UnicodeEncodeError(BOARD '・')/rc1/stdout0 재현. 통합수락보류, 2차반려・3차Opus high수정승격. master/push없음.
 - Opus재시작 --retry-of ctx_8201f28c7b3a는task_not_startable로시작전거절(이전Dispatch는completed). dispatch-show/worker-show로succeeded・released・exited확인후같은Task task_39014f228445를ready로열어동일t-005-dev에Opus5.5/high ctx_f3470b5bdb1a ready. 반려2회횟수는유지,회피/새Task없음. 최신T-005-opus-fix명세를send로우선전달.
 - QA2차정정은ctx_1382f85450d1에send요청. 최종수락보류이며Opus3차도FAIL이면사람검토필요중단.
+- T-005 QA2차FAIL d2e4a22 허용2파일/clean확인: test19 cp949:strict + ・/emoji/한글fixture에서UnicodeEncodeError/빈stdout RED재현. 첫TypeError test17/edge18보존. Opus ctx_f3470b5bdb1a는live/working이며수정커밋대기,반려2유지.
