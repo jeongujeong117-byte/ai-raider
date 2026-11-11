@@ -2,7 +2,7 @@
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
-| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | Sonnet 재시작 완료·개발 중 | jeongujeong117-byte/t-000-dev | 0 |
+| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | S1 완료·S2 검증 배정 준비 | jeongujeong117-byte/t-000-dev | 0 |
 | T-001 | 수집기 상태 4종 및 감시 | S1-A | T-000 PASS·병합 대기 | 미정 | 0 |
 | T-002 | 조회 전용 MCP 도구 | S1-B | T-000 PASS·병합 대기 | 미정 | 0 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 | T-000 PASS·병합 대기 | 미정 | 0 |
@@ -31,3 +31,11 @@
 - 시작 영수증: ready, model=`claude-sonnet-5-5`, effort=`medium`
 - 정책·인계 명세 커밋: `02ed07c`. 제품 변경을 보존한 채 개발 브랜치에 fast-forward 반영했다.
 - 최신 spec 우선 및 기존 변경을 확인하고 이어서 진행하라는 지시를 새 dispatch에 send했다.
+
+## S1 완료 증거
+
+- 개발 커밋: `c4783ac`, 보고서: `handoff/reports/T-000-dev.md` (개발 브랜치)
+- 변경 파일 25개는 허용 목록 안이며 기존 tests 변경 없음, 개발 워크트리 clean 확인.
+- S1 보고: 기준/변경 후 unittest 각 50개 OK, HTTP smoke·CLI help·모듈 import·wheel 구성·diff check exit 0.
+- 실계정 수집은 미검증(금지). console entrypoint 실행·실제 serve/브라우저 화면 검증은 S2에 확인 요청.
+- S2 명세: `handoff/specs/T-000-qa.md`. 아직 PASS 및 develop 제품 병합 아님.
