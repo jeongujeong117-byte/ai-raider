@@ -8,8 +8,8 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | S1 651cb84 완료・S2 QA 진행 | jeongujeong117-byte/t-004-dev / t-004-qa | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | spec 작성・배정 준비 | 예정 t-005-dev | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 배정 준비 | 예정 s4-audit | 해당 없음 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 ready・개발 중 | jeongujeong117-byte/t-005-dev | 0 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 점검 ready・결과 대기 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -108,3 +108,9 @@
 - S3 후속 dispatch released/processAction=closed_agent_terminal 확인.
 - T-004 Task task_719ebd078b96 / dispatch ctx_6f941cb32864: t-004-dev, claude-sonnet-5-5/high, structured ready 확인. S1 결과 후 S2 QA에서 새 Antigravity 계정 첫 응답 확인 예정.
 - T-004 S2 Task task_0297815ac152 / dispatch ctx_1c08dcaa27b0: Antigravity terminal ready. 첫 정상 응답 msg_82057e3f6437 수신, 자체 보고 모델 Gemini 3.8 Flash (Medium). 최종 QA 결과 대기.
+
+## 추가 지시 병행 배정
+
+- S4 Task task_6d128e5073dd / dispatch ctx_1318677b4450: Sonnet5.5/low, s4-audit, ready.
+- T-005 Task task_02b2e5b96fea / dispatch ctx_ad2fdbb728f9: Sonnet5.5/medium, t-005-dev, ready. T-004 허용 파일과 비중복.
+- T-004 QA ctx_1c08dcaa27b0 유지, 중단/재시작 없음. 완료된 S1 ctx_6f941cb32864는 released/processAction=closed_agent_terminal 확인.
