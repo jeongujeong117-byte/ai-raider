@@ -83,3 +83,44 @@
 | T-006 | 개발 진행 | task_714f8a289523 dispatched, t-006-dev=aa08b38 | 커밋 증거 없음 |
 | T-007~T-020 | 미착수 | 해당 task 없음 | 선행 조건 대기 |
 전체 완료율은 계산하지 않는다.
+
+---
+
+# 3차 점검 · T-006 수락 후
+
+- 관측: 2026-11-12, develop=38fc20d, master=origin/master(로컬 ref)=0be384f. Run run_548a284d59da. 판단은 `git show develop:` 최신 문서와 실제 git/Orca 대조. 테스트 실행/설치 없음, 보고의 명령/rc/수치만 대조. 이전 로그 보존.
+
+## 정상 확인
+- T-006: 283d62e(개발)・298ece3(QA)・38f911b(병합) 모두 develop 조상. 개발 변경 6개 파일(config, core/analysis_schema.py, 보고서, 테스트 3), QA 변경 2개 파일.
+- 사용자 config(읽기 전용 확인): config/known_concepts.json은 provenance=user_confirmed, concepts=환각/프롬프트 엔지니어링/컨텍스트 윈도우/RAG/임베딩 정확히 5개, aliases는 5개 canonical 각각의 영문・표기 변형만(미선택 파인튜닝/MCP/LoRA/양자화/에이전트 하네스는 포함 안 됨). D-015 하단 사용자 확정과 일치.
+- 코드: core/analysis_schema.py의 KnownConcepts는 provenance를 initial_synthetic_draft|user_confirmed로 구분하고 aliases 키가 concepts에 존재해야 하며 canonical/alias가 strip+casefold 기준으로 중복・충돌 불가. 합성 12개 gold는 tests/blackbox/fixtures/gold_samples.json에 있고 이 파일은 T-003 커밋(97178b6, ff69a03) 이후 변경 없음 → 합성 fixture와 사용자 config 분리 유지. 합성 12개가 config에 섞인 흔적 없음.
+- 테스트 수: QA 보고 기본 231개 OK(skip 11), extras 231개 OK(skip 0). 이전 199에서 증가, 감소 없음. S0가 QA 브랜치와 38f911b 병합 후 extras 231/skip0/exit0 재실행했다고 BOARD에 기록(이번에 재현 안 함). S1의 216개/skip11은 MCP 미포함 부분 수치로 BOARD가 구분.
+- 반려 횟수: T-006 0회. 완료 워커 task_714f8a289523, task_116fedbd0567 및 이전 S4/학습 dispatch 모두 succeeded・exited・released.
+- master 병합/push 흔적 없음(로컬 ref 기준).
+- 동시 live 작업: T-005 수정(ctx_8201f28c7b3a), T-005 QA 정정(ctx_859106d12f87, Antigravity retained・live=진행 중), T-006 학습(ctx_382d54a8897c), 본 S4 = 4개, 한도 이내.
+
+## T-005 상태 (이상 아님, 정상 진행)
+- T-005 QA 7e1e5be는 S0가 미수락. S0 probe로 tasks=[{id:[]}] 주입 시 check_orca의 TypeError 재현, 1차 반려. 이는 S0 BOARD/ROADMAP("1차 반려・수정 대기")과 일치. 반려 1회로 2회 미만. 0b7b045와 7e1e5be 모두 develop 미포함이며 병합 전 정상.
+- t-005-dev 워크트리에 tools/progress_check.py 미커밋 수정 존재: 반려 수정 S1 live 작업 중 산출물로 보이며 현재 이상 아님. 최종 보고 시 커밋 확인 필요.
+- 주의: T-005 PASS를 낸 S2가 손상 JSON 입력을 못 잡은 것은 QA 검증 범위 누락 사례. 정정된 FAIL 이력 보존 필요(S0가 요청함).
+
+## 이상
+1. T-005 S1 164개/QA 수치는 T-004・T-006 미포함 브랜치 기준. 병합 시 develop 231개 기준 회귀로 다시 확인 필요(시점 혼동 방지).
+2. T-002 ctx_c64264f2869c의 retained/unverifiable 지속(생존 확인 못 함). 이번 worker-list 앞부분에서는 재확인하지 않음.
+3. BOARD에 T-006 QA 모델 불명 표기는 'Antigravity'뿐. 자체 설정이므로 이상 아님.
+
+## 권고
+- T-005 병합 전 develop 기준 extras 전체 회귀 수치를 시점과 함께 분리 기록하고, 반려 수정은 손상 JSON(타입오염 id/최상위 비객체/빈 입력) 케이스를 QA가 재현했는지 확인.
+- T-006 학습 문서에서 5개 기지식과 합성 12개 분리, 신개념 뜻풀이는 T-011/T-012 범위라는 점이 유지되는지 확인.
+
+## 확인 못 함
+- 원격 push 실제 상태(fetch 안 함). unverifiable dispatch 생존. 테스트 수치 독립 재현. T-005 수정/QA 정정 최종 결과. 실계정/사용자 DB 상태.
+
+## ROADMAP 발췌
+| ID | 상태 | 근거 | 부족 증거 |
+|---|---|---|---|
+| T-004 | 완료 | df7c360 | - |
+| T-005 | 1차 반려・수정 진행 | 0b7b045/7e1e5be 미병합, 수정 task live | 수정 커밋, QA 재검증 |
+| T-006 | 완료 | 283d62e/298ece3, 38f911b, QA 231 보고, config 직접 확인 | LLM 실제 사용 단계 미구현(T-011/T-012) |
+| T-007~T-020 | 미착수 | task 없음 | 선행조건 |
+전체 완료율은 계산하지 않는다.
