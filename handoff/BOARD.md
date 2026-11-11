@@ -6,7 +6,7 @@
 | T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 140fcdf, QA 0f0b8cb) | 1 |
 | T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 6a64b95, QA be22c81, 병합 c647843/b67a261) | 1 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
-| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | S1 651cb84 완료・독립 QA 배정 준비 | jeongujeong117-byte/t-004-dev | 0 |
+| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | S1 651cb84 완료・S2 QA 진행 | jeongujeong117-byte/t-004-dev / t-004-qa | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
 
@@ -105,3 +105,4 @@
 - 병합 후 uv run python -m unittest discover -s tests: 131개 OK, skip 없음, exit 0. MCP stdio 검증 포함.
 - S3 후속 dispatch released/processAction=closed_agent_terminal 확인.
 - T-004 Task task_719ebd078b96 / dispatch ctx_6f941cb32864: t-004-dev, claude-sonnet-5-5/high, structured ready 확인. S1 결과 후 S2 QA에서 새 Antigravity 계정 첫 응답 확인 예정.
+- T-004 S2 Task task_0297815ac152 / dispatch ctx_1c08dcaa27b0: Antigravity terminal ready. 첫 정상 응답 msg_82057e3f6437 수신, 자체 보고 모델 Gemini 3.8 Flash (Medium). 최종 QA 결과 대기.
