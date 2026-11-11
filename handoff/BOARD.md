@@ -2,7 +2,7 @@
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
-| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | S1 완료·S2 검증 배정 준비 | jeongujeong117-byte/t-000-dev | 0 |
+| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-000-dev | 0 |
 | T-001 | 수집기 상태 4종 및 감시 | S1-A | T-000 PASS·병합 대기 | 미정 | 0 |
 | T-002 | 조회 전용 MCP 도구 | S1-B | T-000 PASS·병합 대기 | 미정 | 0 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 | T-000 PASS·병합 대기 | 미정 | 0 |
@@ -39,3 +39,11 @@
 - S1 보고: 기준/변경 후 unittest 각 50개 OK, HTTP smoke·CLI help·모듈 import·wheel 구성·diff check exit 0.
 - 실계정 수집은 미검증(금지). console entrypoint 실행·실제 serve/브라우저 화면 검증은 S2에 확인 요청.
 - S2 명세: `handoff/specs/T-000-qa.md`. 아직 PASS 및 develop 제품 병합 아님.
+
+## S2 배정 기록
+
+- Task: `task_9978288124b6`, dispatch: `ctx_2f5582e7c789`
+- 검증 기반: 개발 브랜치 `jeongujeong117-byte/t-000-dev`의 `c4783ac`
+- 자식 워크트리: `C:/Users/jeong/orca/workspaces/my-project/t-000-qa`
+- 모델/effort: 사용자 정책 예외에 따라 Antigravity 자체 기본 설정.
+- 시작 영수증 ready. Windows에서 Antigravity structured chat 미지원으로 Orca가 terminal worker로 시작함. 제어는 orchestration만 사용한다.
