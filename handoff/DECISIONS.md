@@ -113,3 +113,7 @@ T-006 개발283d62e/QA298ece3를38f911b로 수락・통합했다. S0 병합전�
 T-005 PASS7e1e5be는 미수락. 손상Orca JSON의 tasks 원소 id=[]가 _orca_json의 dict원소 검사만 통과한 뒤 title_by_id dict키에서 TypeError를 일으킴을 S0가 unittest.mock 주입으로 재현했다. 필수파싱실패 exit2 계약위반. S1 1차반려(Sonnet medium), QA FAIL정정 및 RED회귀 요청. 첫PASS/실패이력을 보존하며 수정전 병합하지 않는다.
 
 T-005 QA후속시작관측지연: Orca turn_start_unobserved 알림에도 ctx_1382f85450d1는live/working이며 worker-read의명령실행과QA브랜치45eebba(수정be09b34병합)를확인했다. 시작영수증불확실과실제작업진행을구분하고 중복시작・자동stop・재전송을하지않는다. 최종검증성공은아직확인못함.
+
+## D-020 · 2026-11-12 · T-005 통합 회귀 실패・2차 반려
+
+QA76ab0b5/S0 QA브랜치184개통과후67c8961통합했으나 전체284개중test16 JSONDecodeError/test18 rc불일치. uvPython3.14 subprocess stdout cp949가BOARD '・'출력에서UnicodeEncodeError로깨지는것을S0재현. 따라서통합됐어도최종수락/완료아님. 2회반려로3차Opus5.5/high 같은워크트리승격. 이번실패시사람검토필요중단. S0제품직접수정없음, 원격배포/master변경없음.

@@ -8,7 +8,7 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | 원본 FAIL d0fa3ed 보존・be09b34 QA 재검증 | jeongujeong117-byte/t-005-dev | 1 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | 통합 회귀 cp949 출력 실패・2차 반려, 수락 보류 | develop에 67c8961 통합됐으나 검증 실패, 수정 t-005-dev | 2 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
 | S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
@@ -138,3 +138,4 @@
 - T-006 학습6f02b04 허용docs2개를수락・병합, 현재사용자5개/alias와T004합성12개역사구분, 자동추출/뜻풀이는후속명시. S3 released. 문서통합으로제품회귀재실행없음, 직전제품231개증거유지.
 - T-005 원본FAIL task_ccb6cab3e1ce/ctx_859106d12f87 outcome failed는의도된결함이력, d0fa3ed RED확인. 자동후속task_021b937ec611/ctx_1382f85450d1가이미working이므로중복시작하지않고해당dispatch에be09b34재검증지시전달. 반려횟수1유지.
 - T-005 후속ctx_1382f85450d1에turn_start_unobserved/start_unknown 알림수신. worker-show는live/working, worker-read에서git show be09b34/merge실행을관측, QA브랜치45eebba로수정병합확인. 실제진행증거있어중복시작/재전송/중단없음. 최종worker_done대기.
+- T-005 QA76ab0b5 및S0 QA브랜치184개/skip0/exit0 확인후67c8961 통합. 통합전체284개는1error/1failure로exit1. 실제CLI프로브도cp949 UnicodeEncodeError(BOARD '・')/rc1/stdout0 재현. 통합수락보류, 2차반려・3차Opus high수정승격. master/push없음.
