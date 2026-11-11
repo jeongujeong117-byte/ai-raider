@@ -457,6 +457,24 @@ def check_worktrees(rep: Report, git: Git) -> None:
         rep.check(name, "ok", "clean" if not entries else f"dirty({len(entries)}건, 본문 미조회)")
 
 
+_ITEM_FIELDS = {
+    "tasks": (("id", True), ("status", False), ("title", False)),
+    "workers": (("dispatchId", True), ("taskId", False), ("state", False), ("liveness", False),
+                ("terminalState", False), ("outcome", False)),
+}
+
+
+def _validate_items(key: str, items: list[dict]) -> None:
+    """실제 소비하는 필드의 타입을 경계에서 검증한다(필수는 비어있지 않은 str, 선택은 str/None)."""
+    for item in items:
+        for field, required in _ITEM_FIELDS[key]:
+            v = item.get(field)
+            if v is None and not required:
+                continue
+            if not isinstance(v, str) or (required and not v):
+                raise ValueError(field)
+
+
 def _orca_json(rep: Report, orca: str, timeout: float, sub: str, run_id: str,
                key: str, extra: list[str]) -> tuple[list[dict] | None, dict]:
     res = run_command([orca, "orchestration", sub, "--run", run_id, "--json", *extra], timeout)
@@ -466,12 +484,18 @@ def _orca_json(rep: Report, orca: str, timeout: float, sub: str, run_id: str,
         return None, {}
     try:
         data = json.loads(res.stdout)
-        result = data["result"]
-        items = result[key]
-        if data.get("ok") is not True or not isinstance(items, list) or \
-                not all(isinstance(i, dict) for i in items):
+        if not isinstance(data, dict) or data.get("ok") is not True:
             raise ValueError
-    except (ValueError, KeyError, TypeError):
+        result = data["result"]
+        if not isinstance(result, dict):
+            raise ValueError
+        items = result[key]
+        if not isinstance(items, list) or not all(isinstance(i, dict) for i in items):
+            raise ValueError
+        _validate_items(key, items)
+        if result.get("nextCursor") is not None and not isinstance(result["nextCursor"], str):
+            raise ValueError
+    except (ValueError, KeyError, TypeError, RecursionError):
         rep.check(name, "error", f"orca {sub} JSON 파싱 실패")
         return None, {}
     rep.check(name, "ok", f"{len(items)}건 확인")
@@ -625,7 +649,10 @@ def main(argv: list[str] | None = None) -> int:
             check_unobservable(rep, git)
 
     orca = resolve_executable(args.orca_command or default_orca_command())
-    check_orca(rep, orca, args.timeout, args.run)
+    try:
+        check_orca(rep, orca, args.timeout, args.run)
+    except Exception:  # 예기치 못한 입력도 traceback/원시 오류 없이 고정 오류로 처리
+        rep.check("orca_internal", "error", "Orca 응답 처리 중 내부 오류 (returncode=2)")
 
     data = rep.to_dict()
     print(json.dumps(data, ensure_ascii=False, indent=2) if args.json else render_text(data))
