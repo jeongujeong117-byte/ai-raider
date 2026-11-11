@@ -8,7 +8,9 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | S1 651cb84 완료・S2 QA 진행 | jeongujeong117-byte/t-004-dev / t-004-qa | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | spec 작성・배정 준비 | 예정 t-005-dev | 0 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 배정 준비 | 예정 s4-audit | 해당 없음 |
+| 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
 
