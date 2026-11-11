@@ -850,6 +850,64 @@ class BlackboxProgressCheckTests(unittest.TestCase):
         self.assertIn("orca_task_list", check_names)
         self.assertIn("orca_worker_list", check_names)
 
+    # --------------------------------------------------------------------------
+    # 10. Schema Type Pollution & Unhashable Field Attack (RED Regression)
+    # --------------------------------------------------------------------------
+
+    def test_17_orca_schema_type_pollution_and_unhashable_fields(self):
+        """Orca response with unhashable task/worker fields or top-level scalar/list must yield exit 2 without unhandled traceback."""
+        if not self.mock_orca_exe:
+            self.skipTest("C# compiler required")
+        repo = os.path.join(self.test_dir, "type_pollution_repo")
+        os.makedirs(repo)
+        c1 = self._init_git_repo(repo, branch="develop")
+        self._write_board(repo, [f"| T-001 | Task | S1 | 병합 완료 ({c1[:12]}) | develop | 0 |"])
+
+        # 1. Top-level scalar
+        Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+            json.dumps("scalar response string"), encoding="utf-8"
+        )
+        res = self._run_cli(["--repo", repo, "--run", "run_poll_scalar", "--orca-command", self.mock_orca_exe, "--json"])
+        self.assertEqual(res.returncode, 2)
+        self.assertNotIn("Traceback", res.stderr)
+
+        # 2. Top-level list
+        Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+            json.dumps([1, 2, 3]), encoding="utf-8"
+        )
+        res = self._run_cli(["--repo", repo, "--run", "run_poll_list", "--orca-command", self.mock_orca_exe, "--json"])
+        self.assertEqual(res.returncode, 2)
+        self.assertNotIn("Traceback", res.stderr)
+
+        # 3. Malformed result (tasks is integer, not list)
+        Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+            json.dumps({"ok": True, "result": {"tasks": 12345}}), encoding="utf-8"
+        )
+        res = self._run_cli(["--repo", repo, "--run", "run_poll_not_list", "--orca-command", self.mock_orca_exe, "--json"])
+        self.assertEqual(res.returncode, 2)
+        self.assertNotIn("Traceback", res.stderr)
+
+        # 4. Unhashable list id in tasks: tasks=[{"id": [], "title": "T-005"}]
+        # In 0b7b045: _orca_json allows dict elements, but check_orca dict comprehension crashes with unhandled TypeError.
+        # Expected: safe error reporting, exit code 2, no raw traceback on stderr.
+        Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+            json.dumps({"ok": True, "result": {"tasks": [{"id": [], "title": "T-005"}]}}), encoding="utf-8"
+        )
+        res = self._run_cli(["--repo", repo, "--run", "run_poll_unhashable_task", "--orca-command", self.mock_orca_exe, "--json"])
+        self.assertNotIn("Traceback", res.stderr, "Unhandled traceback leaked on unhashable task id")
+        self.assertEqual(res.returncode, 2, "Unhashable task id must produce exit code 2")
+
+        # 5. Unhashable list taskId in workers: workers=[{"dispatchId": "ctx_01", "taskId": []}]
+        Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+            json.dumps({"ok": True, "result": {"tasks": []}}), encoding="utf-8"
+        )
+        Path(os.path.join(self.mock_dir, "mock_worker_list.json")).write_text(
+            json.dumps({"ok": True, "result": {"workers": [{"dispatchId": "ctx_01", "taskId": []}]}}), encoding="utf-8"
+        )
+        res_worker = self._run_cli(["--repo", repo, "--run", "run_poll_unhashable_worker", "--orca-command", self.mock_orca_exe, "--json"])
+        self.assertNotIn("Traceback", res_worker.stderr, "Unhandled traceback leaked on unhashable worker taskId")
+        self.assertEqual(res_worker.returncode, 2, "Unhashable worker taskId must produce exit code 2")
+
 
 if __name__ == "__main__":
     unittest.main()
