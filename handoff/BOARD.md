@@ -137,3 +137,4 @@
 - T-005 be09b34 허용3파일/clean, S1 기본166개 skip11/extras166개 skip0 보고. 타입검사/catchall diff확인, 원본FAIL정정수신뒤재검증요청예정. 수정완료S1 released.
 - T-006 학습6f02b04 허용docs2개를수락・병합, 현재사용자5개/alias와T004합성12개역사구분, 자동추출/뜻풀이는후속명시. S3 released. 문서통합으로제품회귀재실행없음, 직전제품231개증거유지.
 - T-005 원본FAIL task_ccb6cab3e1ce/ctx_859106d12f87 outcome failed는의도된결함이력, d0fa3ed RED확인. 자동후속task_021b937ec611/ctx_1382f85450d1가이미working이므로중복시작하지않고해당dispatch에be09b34재검증지시전달. 반려횟수1유지.
+- T-005 후속ctx_1382f85450d1에turn_start_unobserved/start_unknown 알림수신. worker-show는live/working, worker-read에서git show be09b34/merge실행을관측, QA브랜치45eebba로수정병합확인. 실제진행증거있어중복시작/재전송/중단없음. 최종worker_done대기.
