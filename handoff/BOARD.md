@@ -146,3 +146,4 @@
 - T-005 최종QA b4400b7 허용2개/clean, 원본FAIL/인코딩FAIL이력보존. S0 QA브랜치extras194개/skip0/exit0(57.251초) 재실행후c3984b9통합. 통합extras전체294개/skip0/exit0(58.453초) 확인하여최종수락. 이전284개실패는수정전이력으로유지.
 - S0실제통합CLI cp949:strict/ascii:strict/utf8:strict 모두rc1/JSON파싱성공/stderr0/필수소스오류0. rc1은경고findings정상산출물,실패아님. QA최종dispatch released확인.
 - S4수락후감사 task_66b3804c8c9a/ctx_4aa5eeecd9c0 Sonnetlow ready. T005학습 task_b6a3910ffd97/ctx_f9cb089ad589 Sonnetlow ready. 최종수락후후속2개진행중.
+- S4 4차656561a도착: 새위반없음/통합294개와코드/승격이력정합. 권고의3회반려표현은실제2회반려후3차통과와달라수락전문구정정요청. 학습결과대기.
