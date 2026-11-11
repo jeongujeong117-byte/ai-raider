@@ -139,3 +139,5 @@
 - T-005 원본FAIL task_ccb6cab3e1ce/ctx_859106d12f87 outcome failed는의도된결함이력, d0fa3ed RED확인. 자동후속task_021b937ec611/ctx_1382f85450d1가이미working이므로중복시작하지않고해당dispatch에be09b34재검증지시전달. 반려횟수1유지.
 - T-005 후속ctx_1382f85450d1에turn_start_unobserved/start_unknown 알림수신. worker-show는live/working, worker-read에서git show be09b34/merge실행을관측, QA브랜치45eebba로수정병합확인. 실제진행증거있어중복시작/재전송/중단없음. 최종worker_done대기.
 - T-005 QA76ab0b5 및S0 QA브랜치184개/skip0/exit0 확인후67c8961 통합. 통합전체284개는1error/1failure로exit1. 실제CLI프로브도cp949 UnicodeEncodeError(BOARD '・')/rc1/stdout0 재현. 통합수락보류, 2차반려・3차Opus high수정승격. master/push없음.
+- Opus재시작 --retry-of ctx_8201f28c7b3a는task_not_startable로시작전거절(이전Dispatch는completed). dispatch-show/worker-show로succeeded・released・exited확인후같은Task task_39014f228445를ready로열어동일t-005-dev에Opus5.5/high ctx_f3470b5bdb1a ready. 반려2회횟수는유지,회피/새Task없음. 최신T-005-opus-fix명세를send로우선전달.
+- QA2차정정은ctx_1382f85450d1에send요청. 최종수락보류이며Opus3차도FAIL이면사람검토필요중단.
