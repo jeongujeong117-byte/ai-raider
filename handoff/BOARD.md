@@ -2,7 +2,7 @@
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
-| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Claude Opus → S2 Antigravity | 명세 확정·배정 준비 | develop (명세), 개발 브랜치 배정 예정 | 0 |
+| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Claude Opus → S2 Antigravity | S1 배정 완료·개발 중 | jeongujeong117-byte/t-000-dev | 0 |
 | T-001 | 수집기 상태 4종 및 감시 | S1-A | T-000 PASS·병합 대기 | 미정 | 0 |
 | T-002 | 조회 전용 MCP 도구 | S1-B | T-000 PASS·병합 대기 | 미정 | 0 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 | T-000 PASS·병합 대기 | 미정 | 0 |
@@ -12,4 +12,13 @@
 ## 운영
 
 동시 워커 최대 4개. T-000은 단독 개발한다. 이후 S1 병렬 작업은 허용 파일이 겹치지 않을 때만 최대 2개다.
-워커 식별자·브랜치는 실제 시작 영수증을 받은 뒤 기록한다.
+## T-000 배정 기록
+
+- 명세 커밋: `e6ef996` (develop)
+- Run: `run_548a284d59da`
+- Task: `task_6264df5edbf9`
+- S1 dispatch: `ctx_8d1667c5e8bd`
+- 에이전트/모델: `claude` / `claude-opus-5-5`
+- 자식 워크트리: `C:/Users/jeong/orca/workspaces/my-project/t-000-dev`
+- 시작 영수증: `ready` (structured worker, keptOpen=true)
+- 다음 단계: S1 결과 수신 → 허용 파일·증거 확인 → 개발 브랜치 기반 S2 Antigravity 검증 배정. 결과는 Orca 알림으로 수신한다.
