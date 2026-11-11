@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|
 | T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity → S3 Sonnet low | PASS·develop 병합 완료, S3 문서 수락 | develop (개발 c4783ac, QA ccec489, 문서 39a088f) | 0 |
 | T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-001-dev | 0 |
-| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | S1 완료·S2 배정 준비 | jeongujeong117-byte/t-002-dev | 0 |
+| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-002-dev | 0 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 작성·검증 중 | jeongujeong117-byte/t-003-qa | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
@@ -73,3 +73,4 @@
 - T-000 문서 develop 병합 완료, S3 수정 dispatch ctx_8e9cb742cb62 released 확인.
 - T-001 S2: Task task_be8cf1f42bc1, dispatch ctx_fd2a8ce7cfb5, t-001-qa 자식 워크트리, 개발 브랜치 7c51734 기반 ready. Antigravity 자체 기본 모델/effort 사용. 중단과 fallback 경계 및 저장 파일 오염도 검증 요청.
 - T-002 S1: 1d65fa4,허용 5개 파일만 변경 및 clean 확인. 보고서상 67개 테스트(신규 17개) 및 실제 SDK stdio/쓰기 없음/패키지 검증 통과. optional extra 미설치 시 서버 전용 신규 4개 skip, 필수 MCP 검증은 extra 설치 후 수행됨. WAL sidecar는 미검증이므로 독립 QA 요청.
+- T-002 S2: Task task_d4517095d4da, dispatch ctx_d7fc5fcb1e19, t-002-qa 자식 워크트리, 개발 브랜치 1d65fa4 기반 ready. Antigravity 자체 모델/effort. handoff/specs/T-002-qa.md 기준.
