@@ -10,7 +10,7 @@
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 0b7b045 완료・S2 QA 진행 | jeongujeong117-byte/t-005-dev | 0 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | S1 ready・개발 중 | jeongujeong117-byte/t-006-dev | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 1차 수락・T-004 수락 후 재감사 진행 | jeongujeong117-byte/s4-audit | 해당 없음 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 2차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -125,3 +125,5 @@
 - T-006의 config/초기config검사 변경은 사용자 승인 계약 갱신이다. 신개념 뜻풀이 생성은 후속 T-011/T-012에 유지.
 - T-005 QA task_0e2cfe1de9ce/ctx_ae2e726c53aa Antigravity ready; T-006 task_714f8a289523/ctx_a9b2e5230be3 Sonnet medium ready.
 - S4 수락 후 감사 task_d4dac40903cb/ctx_ea53cdf69f50 reopened ready(기존 Sonnet low); T-004 학습 task_e3575183518b/ctx_824fa565aabf Sonnet low ready. 실행 작업4개 이내.
+- S4 2차5dbbd32 수락: T-004 통합/199개 정합, 로컬 master 변경/반려2회/수치감소 없음. T-005 미병합은 QA중 정상이며 오류로 취급하지 않음. 학습 starting 관측은 이후 ready/live/working 및 완료 보고로 해소. T-002 과거 retained/unverifiable 생존은 여전히 확인 못 함.
+- T-004 학습49bef5d 수락・develop 병합. 개발보고 필수필드15개 표기와 코드/QA16개 불일치를 문서에서 명시, 코드16개가 기준. 합성12개/T-006 사용자5개/미검증 LLM 경계를 확인. S4와 S3 완료 dispatch released 확인.
