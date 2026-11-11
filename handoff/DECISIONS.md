@@ -57,3 +57,6 @@ orca account list에서 Antigravity 활성 계정 jeongujeong117@gmail.com을 �
 ## D-010 · 2026-11-12 · T-004의 경계
 
 T-004는 Sonnet 5.5/high로 분석 JSON 계약과 합성 기반 지식 사전 초안을 만든다. READY/HOLD와 잡담 판정을 구분하고 원문 내 개념 근거 및 사전 대조를 명시한다. 기존 합성 gold를 사용자 지식이나 모델 정확도 증거로 승격하지 않는다. LLM 프롬프트/평가 설계・DB 이력・MCP 쓰기・수집기 연결은 별도 spec으로 분리한다.
+
+학습 문서 정정 2164224를 확인해 47abdff로 수락・병합했다. 병합 후 전체 unittest 131개 OK, skip 없음, exit 0. T-004 개발 배정 조건을 충족했다. S3 후속 dispatch는 released 확인.
+

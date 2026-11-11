@@ -1,4 +1,4 @@
-# 작업 현황
+﻿# 작업 현황
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
@@ -6,8 +6,8 @@
 | T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 140fcdf, QA 0f0b8cb) | 1 |
 | T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | 수정본 PASS·develop 병합 완료 | develop (개발 6a64b95, QA be22c81, 병합 c647843/b67a261) | 1 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
-| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | 선행 작업 완료·spec 작성, 학습 문서 정정 수락 후 배정 | 예정 t-004-dev | 0 |
-| 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | fc27059 검토·수치 시점 정정 요청 예정, 미병합 | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
+| T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | 학습 문서 수락·회귀 통과, S1 배정 준비 | 예정 t-004-dev | 0 |
+| 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
 
 ## 운영
@@ -98,3 +98,10 @@
 - failed Task task_6ee8fa23c2ad는 최초 PASS를 FAIL로 정정한 이력이다. 후속 task_1bfa2b9e91e2 completed로 해결됐으므로 재시도하지 않는다.
 - fc27059 변경은 지정 docs/learn 문서 두 개뿐. T-003 머리말의 69개/19개가 '보완 전'이라는 설명은 QA 보고서와 달라 수락 보류한다.
 - 첫 send는 consumer_fenced로 거절됨(전달 안 됨). run-use --id run_548a284d59da 성공으로 현재 지휘관 연결을 복구했다. 중복 워커를 시작하지 않았다.
+
+## 학습 문서 수락 및 T-004 재개
+
+- S3 후속 task_3941bb91684d / ctx_93879c6888f1: 2164224의 테스트 시점 정정 확인, 47abdff로 develop 병합.
+- 병합 후 uv run python -m unittest discover -s tests: 131개 OK, skip 없음, exit 0. MCP stdio 검증 포함.
+- S3 후속 dispatch released/processAction=closed_agent_terminal 확인.
+
