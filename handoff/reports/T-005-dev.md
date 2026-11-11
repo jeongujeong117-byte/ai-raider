@@ -64,3 +64,31 @@ Windows `.cmd`→`.exe` 해석은 이 환경(orca.exe 존재)에서만 실행 �
 | 실제 CLI: `progress_check.py --run run_548a284d59da --json` | 1 | findings 15, checks 55 (경고 exit 1은 예상 산출물) |
 | 실제 CLI: `--run run_doesnotexist` | 2 | orca task-list 실패(returncode=1)를 `orca_task_list` error로 고정 문구 보고, 원시 오류 없음 |
 | 실제 CLI: `--orca-command nonexistent-orca-xyz` | 2 | CLI 부재 error 고정 문구 |
+
+## 2차 반려 후 3차 수정 (S1 claude-opus-5-5/high, 통합 cp949 stdout 결함)
+- 원인: develop `67c8961` 통합 후 BOARD T-005 상태 `원본 FAIL d0fa3ed 보존・be09b34 QA 재검증`이 `OPEN_BUT_INTEGRATED` evidence.board_status로 출력되는데, `print(json.dumps(..., ensure_ascii=False))`가 Windows 파이프 stdout(cp949)에 `'\u30fb'`(・)를 쓰다 `UnicodeEncodeError` → rc 1, stdout 0B, traceback. 텍스트 모드도 동일. be09b34 TypeError 수정은 유지(변경 없음).
+- 수정(`tools/progress_check.py`, 출력부만):
+  - JSON 모드: `ensure_ascii=True`. 출력이 ASCII 전용이라 자식 stdout 인코딩(cp949/UTF-8/ascii, strict 포함)·부모 `text=True` 로캘 디코딩·터미널/파이프 어느 쪽에서도 깨지지 않는다. 표준 JSON 이스케이프이므로 `json.loads` 후 원문(한글·・·이모지·브랜치명)이 바이트 단위로 동일하게 복원된다. 스키마·필드·exit 계약 불변. 호환성 비용: 원시 JSON을 눈으로 볼 때 한글이 `\uXXXX`로 보인다(파싱 소비자에는 차이 없음).
+  - 텍스트 모드(사람용): `write_safe()`가 현재 스트림 인코딩으로 쓰고 표현 불가 문자만 `backslashreplace`로 `\uXXXX`/`\U000XXXXX` 치환. UTF-8 콘솔/`PYTHONUTF8`에서는 원문 그대로, cp949 파이프에서는 한글 유지·`・`/이모지만 이스케이프. `errors=ignore` 같은 정보 유실 없음, 환경변수 설정이나 `sys.stdout.reconfigure` 같은 전역 변경도 하지 않음. 고립 서로게이트·알 수 없는 코덱·encoding 없는 스트림(StringIO)·stdout None도 처리.
+  - stderr 고정 오류 3곳도 `write_safe` 경유(원시 인자 미에코 유지).
+- 선택 근거: 인코딩 강제(reconfigure utf-8)는 부모가 cp949 `text=True`로 읽을 때 부모 쪽 `UnicodeDecodeError`를 만든다(재현 확인). ASCII JSON은 어떤 부모 디코딩과도 호환되는 유일한 선택이다. 텍스트 모드는 부모가 자식과 다른 인코딩으로 강제 디코딩하는 경우(예: 자식 `PYTHONIOENCODING=utf-8`, 부모 cp949)까지는 보장하지 않으며 기계 소비는 `--json`을 쓰는 것이 계약이다.
+
+### 신규 테스트 +8 (총 43개)
+- `EncodingUnitTests` 4: cp949/UTF-8/ascii strict `TextIOWrapper`에 main 직접 연결 — JSON은 strict ASCII 디코딩·board_status 원문 일치·한글 고정 문구 복원; 텍스트 cp949는 `QA 진행\u30fb대기 \U0001f680 \u2728`(한글 유지), UTF-8은 원문; `write_safe` 경계(서로게이트/StringIO/None/잘못된 코덱); strict ascii stderr에서도 고정 오류만.
+- `RealCliEncodingTests` 4 (실제 subprocess 경계, 임시 git repo: develop 커밋 2개 + `・`/이모지 BOARD 상태 + 한글·이모지 브랜치 dirty worktree, 가짜 orca는 `sys.executable` + cwd의 `orchestration` 스크립트로 allowlist 그대로 통과·UTF-8 바이트 출력): 환경 5종(기본/`PYTHONIOENCODING=cp949:strict`/`utf-8:strict`/`PYTHONUTF8=1`/`ascii:strict`)에서 JSON rc1·stderr 0B·strict ASCII·`OPEN_BUT_INTEGRATED`/`WORKTREE_DIRTY`(branch 원문)/`WORKER_RETAINED`/`TASK_FAILED_HISTORY`·orca check ok; 부모 `text=True` 5종; 텍스트 모드 5종(자식 인코딩 strict 디코딩, 원문 또는 무손실 이스케이프); 원본 S0 TypeError(task id `[]`)를 실제 CLI로 기본/cp949 × JSON/텍스트 → rc2·stderr 0B·`orca task-list JSON 파싱 실패`.
+- RED→GREEN: 같은 테스트를 be09b34 `progress_check.py`에 적용 시 43개 중 8개 실패(errors=4, failures=4: cp949/ascii `UnicodeEncodeError`, `write_safe` 부재), 기존 35개 통과. 수정 후 43개 OK. 기존 테스트 수정·완화·skip 없음.
+
+### 3차 재검증 증거 (2026-11-12, uv Python 3.14.7, stdout 기본 cp949)
+| 명령 | rc | 결과 |
+|---|---|---|
+| `uv run python -m unittest tests.test_progress_check` | 0 | 43개 OK |
+| `uv run --exact python -m unittest discover -s tests` (t-005-dev 브랜치, 기본) | 0 | **174개** OK, skipped=11 (전부 `optional extra 'mcp' not installed`) |
+| `uv run --exact --extra mcp --extra processing python -m unittest discover -s tests` | 0 | **174개** OK, skip 0 |
+| (참고) 위 174개는 t-005-dev 독립 브랜치 기준(이전 166 + 신규 8). develop `67c8961`의 284개와 다른 집합이며 develop은 S1이 병합/실행하지 않음 | | |
+| 통합 조건 재현: develop `67c8961` 스냅숏을 scratchpad 임시 clone(원본 repo 무변경)으로 `--repo` 지정, be09b34 도구 | 1 | 기본·`cp949:strict` × JSON·텍스트 4종 모두 stdout 0B + `UnicodeEncodeError '\u30fb'` (S0 보고와 동일) |
+| 같은 스냅숏, 수정 도구 | 1 | 4종 모두 stderr 0B, JSON 15137B 파싱 성공, `OPEN_BUT_INTEGRATED` T-005 board_status `원본 FAIL d0fa3ed 보존・be09b34 QA 재검증` 원문 복원 |
+| S0 원문 명령 `subprocess.run([sys.executable,'tools/progress_check.py','--run','run_548a284d59da','--json'],capture_output=True,text=True)` | 1 | stdout 16157B, `json.loads` 성공, stderr `''` |
+| 실제 현재 repo Run (`--repo` 기본=t-005-dev) 기본/`cp949:strict`/`utf-8` × JSON/텍스트 | 1 | 6종 stderr 0B; JSON findings 21(warning 2: WORKTREE_DIRTY 1[작업 중 t-005-dev 자신], WORKER_RETAINED 1; info 19), checks 59(ok 41, unknown 18) |
+| 실제 현재 develop 워크트리 `--repo s0-codex`(읽기 전용) 동일 6종 | 1 | 6종 stderr 0B; findings 22(warning 3: WORKTREE_DIRTY 1, REJECTION_COUNT_HIGH 1[T-005 반려 2], WORKER_RETAINED 1), checks 60(ok 44, unknown 16) |
+
+- 수치는 위 시점 Orca/worktree 상태 기준이며 워커·worktree 변화에 따라 달라진다. QA 전 수락 없음.

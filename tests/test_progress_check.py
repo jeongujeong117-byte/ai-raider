@@ -544,5 +544,212 @@ class RealGitFixtureTests(Base):
         self.assertIn("WORKTREE_DIRTY", [f["code"] for f in rep.findings])
 
 
+# --------------------------------------------------------------------------
+# 출력 인코딩 (3차 수정: Windows cp949 stdout 에서 '・' 등으로 UnicodeEncodeError/rc1)
+# --------------------------------------------------------------------------
+
+UNI_STATUS = "QA 진행・대기 🚀 ✨"  # '・'(U+30FB)와 이모지는 cp949 로 표현 불가
+UNI_BRANCH = "기능/진행・감독-🚀"
+
+
+def _strict_stream(encoding):
+    raw = io.BytesIO()
+    return raw, io.TextIOWrapper(raw, encoding=encoding, errors="strict", newline="\n")
+
+
+class EncodingUnitTests(Base):
+    """main 을 cp949/UTF-8 strict 스트림에 직접 연결해 인코딩 독립성을 검증한다."""
+
+    def env(self):
+        return FakeEnv(board(f"| T-005 | a | S1 → S2 QA | {UNI_STATUS} 개발 aaaaaaa1 | QA bbbbbbb2 {UNI_BRANCH} | 0 |"),
+                       ancestors=[A, B],
+                       tasks=[{"id": "task_1", "status": "failed", "title": "T-005 한글・🚀"}])
+
+    def run_stream(self, encoding, json_mode):
+        (Path(self.dir) / "handoff").mkdir(exist_ok=True)
+        env = self.env()
+        (Path(self.dir) / "handoff" / "BOARD.md").write_text(env.board_text, encoding="utf-8")
+        raw, stream = _strict_stream(encoding)
+        err_raw, err = _strict_stream(encoding)
+        with mock.patch.object(pc, "run_command", env), \
+                mock.patch.object(pc.shutil, "which", return_value="/usr/bin/git"), \
+                mock.patch.object(pc, "resolve_executable", return_value="/usr/bin/orca"), \
+                mock.patch.object(pc.sys, "stdout", stream), mock.patch.object(pc.sys, "stderr", err):
+            rc = pc.main(["--repo", self.dir, "--run", "run_x", *(["--json"] if json_mode else [])])
+        stream.flush()
+        err.flush()
+        return rc, raw.getvalue(), err_raw.getvalue()
+
+    def test_json_is_ascii_and_roundtrips_under_any_stream_encoding(self):
+        for enc in ("cp949", "utf-8", "ascii"):
+            rc, out, err = self.run_stream(enc, True)
+            self.assertEqual((rc, err), (1, b""), enc)
+            d = json.loads(out.decode("ascii"))  # ASCII 전용이어야 어떤 부모 디코딩에서도 안전
+            f = next(x for x in d["findings"] if x["code"] == "OPEN_BUT_INTEGRATED")
+            self.assertEqual(f["evidence"]["board_status"], f"{UNI_STATUS} 개발 aaaaaaa1")  # 원문 보존
+            self.assertTrue(any(c["detail"] == "git 저장소 확인" for c in d["checks"]))  # 한글 고정 문구 복원
+
+    def test_text_mode_never_breaks_and_keeps_information(self):
+        rc, out, err = self.run_stream("cp949", False)
+        self.assertEqual((rc, err), (1, b""))
+        text = out.decode("cp949")  # strict 디코딩 성공 = 유효한 cp949
+        self.assertIn("OPEN_BUT_INTEGRATED", text)
+        self.assertIn("QA 진행\\u30fb대기 \\U0001f680 \\u2728", text)  # 표현 불가 문자만 이스케이프, 한글 유지
+        rc, out, err = self.run_stream("utf-8", False)
+        self.assertEqual((rc, err), (1, b""))
+        self.assertIn(UNI_STATUS, out.decode("utf-8"))  # UTF-8 스트림이면 원문 그대로
+
+    def test_write_safe_edge_cases(self):
+        raw, s = _strict_stream("cp949")
+        pc.write_safe(s, "가・\ud800🚀\n")  # 고립 서로게이트도 traceback 없음
+        s.flush()
+        self.assertEqual(raw.getvalue().decode("cp949"), "가\\u30fb\\ud800\\U0001f680\n")
+        buf = io.StringIO()  # encoding 속성 없음 → 그대로
+        pc.write_safe(buf, "・🚀")
+        self.assertEqual(buf.getvalue(), "・🚀")
+        pc.write_safe(None, "x")  # pythonw 등 stdout 없음
+
+        class Weird(io.StringIO):
+            encoding = "no-such-codec"
+        w = Weird()
+        pc.write_safe(w, "가・")
+        self.assertEqual(w.getvalue(), "\\uac00\\u30fb")
+
+    def test_stderr_fixed_errors_under_strict_ascii(self):
+        raw, err = _strict_stream("ascii")
+        out = io.StringIO()
+        with mock.patch.object(pc.sys, "stderr", err), contextlib.redirect_stdout(out):
+            rc = pc.main(["--repo", str(Path(self.dir) / "없는・경로"), "--run", "run_x"])
+        err.flush()
+        self.assertEqual((rc, out.getvalue()), (2, ""))
+        self.assertIn("progress_check:", raw.getvalue().decode("ascii"))
+        self.assertNotIn("없는", raw.getvalue().decode("ascii"))
+
+
+FAKE_ORCA = r'''
+import json, os, sys
+mode = os.environ.get("FAKE_ORCA_MODE", "good")
+if sys.argv[1] == "task-list":
+    tid = [] if mode == "typeerror" else "task_a1"
+    data = {"ok": True, "result": {"tasks": [
+        {"id": tid, "status": "completed", "title": "T-005 진행・감독 🚀"},
+        {"id": "task_b2", "status": "failed", "title": "T-005 재시도 ✨"}]}}
+else:
+    data = {"ok": True, "result": {"workers": [
+        {"dispatchId": "ctx_1", "taskId": "task_a1", "state": "succeeded", "liveness": "exited",
+         "terminalState": "retained", "outcome": None}]}}
+sys.stdout.buffer.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
+'''
+
+
+@unittest.skipUnless(GIT, "git 필요")
+class RealCliEncodingTests(unittest.TestCase):
+    """실제 subprocess 경계: 임시 git/BOARD fixture + 실제 실행되는 가짜 orca(sys.executable).
+
+    가짜 orca 는 `<python> orchestration task-list ...` 형태로 allowlist 를 그대로 통과한다
+    (cwd 의 'orchestration' 스크립트 실행). 저장소(develop)는 건드리지 않는다.
+    """
+
+    TOOL = str(ROOT / "tools" / "progress_check.py")
+
+    @classmethod
+    def setUpClass(cls):
+        cls._td = tempfile.TemporaryDirectory()
+        base = Path(cls._td.name)
+        cls.repo, cls.orca_dir = base / "repo", base / "orca"
+        cls.repo.mkdir()
+        cls.orca_dir.mkdir()
+        (cls.orca_dir / "orchestration").write_text(FAKE_ORCA, encoding="utf-8")
+
+        def git(*a):
+            return subprocess.run([GIT, "-C", str(cls.repo), "-c", "user.name=t", "-c", "user.email=t@e.x",
+                                   "-c", "commit.gpgsign=false", *a], check=True, capture_output=True).stdout
+        git("init", "-q", "-b", "develop")
+        (cls.repo / "a.txt").write_text("1")
+        git("add", "a.txt")
+        git("commit", "-q", "-m", "dev")
+        dev = git("rev-parse", "HEAD").decode().strip()[:10]
+        (cls.repo / "a.txt").write_text("2")
+        git("commit", "-q", "-am", "qa")
+        qa = git("rev-parse", "HEAD").decode().strip()[:10]
+        (cls.repo / "handoff").mkdir()
+        cls.status = f"{UNI_STATUS} 개발 {dev}"
+        (cls.repo / "handoff" / "BOARD.md").write_text(
+            board(f"| T-005 | 진행감독 | S1 → S2 QA | {cls.status} | QA {qa} {UNI_BRANCH} | 0 |"),
+            encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-q", "-m", "board")
+        git("checkout", "-q", "-b", UNI_BRANCH)  # 한글/이모지 브랜치 + dirty → WORKTREE_DIRTY evidence
+        (cls.repo / "dirty・🚀.txt").write_text("x", encoding="utf-8")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._td.cleanup()
+
+    def run_cli(self, env_extra, json_mode=True, mode="good", text=False):
+        env = {k: v for k, v in os.environ.items() if k not in ("PYTHONIOENCODING", "PYTHONUTF8")}
+        env.update(env_extra)
+        env["FAKE_ORCA_MODE"] = mode
+        argv = [sys.executable, self.TOOL, "--repo", str(self.repo), "--run", "run_x",
+                "--orca-command", sys.executable, *(["--json"] if json_mode else [])]
+        return subprocess.run(argv, cwd=str(self.orca_dir), env=env, capture_output=True, timeout=120,
+                              text=text)
+
+    ENVS = ({}, {"PYTHONIOENCODING": "cp949:strict"}, {"PYTHONIOENCODING": "utf-8:strict"},
+            {"PYTHONUTF8": "1"}, {"PYTHONIOENCODING": "ascii:strict"})
+
+    def test_json_contract_under_all_stdout_encodings(self):
+        for extra in self.ENVS:
+            r = self.run_cli(extra)
+            self.assertEqual(r.stderr, b"", extra)
+            self.assertEqual(r.returncode, 1, extra)  # 경고 존재, 필수 소스 정상
+            d = json.loads(r.stdout.decode("ascii"))  # strict ASCII
+            self.assertEqual(d["schema_version"], 1)
+            codes = {f["code"]: f for f in d["findings"]}
+            self.assertEqual(codes["OPEN_BUT_INTEGRATED"]["evidence"]["board_status"], self.status)
+            self.assertEqual(codes["WORKTREE_DIRTY"]["evidence"]["branch"], UNI_BRANCH)
+            self.assertIn("WORKER_RETAINED_AFTER_COMPLETION", codes)
+            self.assertIn("TASK_FAILED_HISTORY", codes)
+            self.assertEqual(next(c for c in d["checks"] if c["name"] == "orca_task_list")["status"], "ok")
+
+    def test_parent_text_true_decoding(self):
+        """부모가 text=True(로캘 디코딩)로 읽어도 JSON 은 항상 디코딩·파싱된다."""
+        for extra in self.ENVS:
+            r = self.run_cli(extra, text=True)
+            self.assertEqual((r.returncode, r.stderr), (1, ""), extra)
+            d = json.loads(r.stdout)
+            f = next(x for x in d["findings"] if x["code"] == "OPEN_BUT_INTEGRATED")
+            self.assertEqual(f["evidence"]["board_status"], self.status)
+
+    def test_text_mode_under_child_stream_encoding(self):
+        import locale
+        default = locale.getencoding() if hasattr(locale, "getencoding") else locale.getpreferredencoding(False)
+        cases = (({}, default), ({"PYTHONIOENCODING": "cp949:strict"}, "cp949"),
+                 ({"PYTHONIOENCODING": "utf-8:strict"}, "utf-8"), ({"PYTHONUTF8": "1"}, "utf-8"),
+                 ({"PYTHONIOENCODING": "ascii:strict"}, "ascii"))
+        for extra, enc in cases:
+            r = self.run_cli(extra, json_mode=False)
+            self.assertEqual((r.returncode, r.stderr), (1, b""), extra)
+            text = r.stdout.decode(enc)  # 자식이 선언한 인코딩으로 strict 디코딩 가능
+            self.assertIn("OPEN_BUT_INTEGRATED", text)
+            # 원문 또는 무손실 \u 이스케이프 중 하나로 반드시 존재
+            escaped = UNI_STATUS.encode(enc, "backslashreplace").decode(enc)
+            self.assertIn(escaped, text, extra)
+            if enc.lower().replace("-", "") == "utf8":
+                self.assertIn(UNI_STATUS, text)
+
+    def test_original_typeerror_regression_via_cli(self):
+        """S0 원본 재현(task id 가 list)도 실제 CLI 경계에서 고정 오류/exit 2."""
+        for extra in ({}, {"PYTHONIOENCODING": "cp949:strict"}):
+            for json_mode in (True, False):
+                r = self.run_cli(extra, json_mode=json_mode, mode="typeerror")
+                self.assertEqual((r.returncode, r.stderr), (2, b""), (extra, json_mode))
+                self.assertNotIn(b"Traceback", r.stdout)
+                if json_mode:
+                    d = json.loads(r.stdout.decode("ascii"))
+                    c = next(c for c in d["checks"] if c["name"] == "orca_task_list")
+                    self.assertEqual((c["status"], c["detail"]), ("error", "orca task-list JSON 파싱 실패"))
+
+
 if __name__ == "__main__":
     unittest.main()

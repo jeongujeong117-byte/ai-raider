@@ -579,9 +579,30 @@ def check_unobservable(rep: Report, git: Git) -> None:
 # --------------------------------------------------------------------------
 
 
+def write_safe(stream, text: str) -> None:
+    """현재 스트림 인코딩(cp949 등)으로 표현할 수 없는 문자만 \\uXXXX 로 바꿔 쓴다.
+
+    errors=ignore 와 달리 정보를 버리지 않으며, 스트림이 errors=strict 여도
+    UnicodeEncodeError/traceback 이 나지 않는다. 인코딩 속성이 없는 스트림(StringIO)은 그대로 쓴다.
+    """
+    if stream is None:
+        return
+    enc = getattr(stream, "encoding", None)
+    if enc:
+        try:
+            text = text.encode(enc, "backslashreplace").decode(enc)
+        except (LookupError, UnicodeError):
+            text = text.encode("ascii", "backslashreplace").decode("ascii")
+    stream.write(text)
+
+
+def _err(message: str) -> None:
+    write_safe(sys.stderr, f"progress_check: {message} (returncode=2)\n")
+
+
 class _Parser(argparse.ArgumentParser):
     def error(self, message):  # 원시 인자를 에코하지 않는 고정 오류
-        sys.stderr.write("progress_check: 잘못된 인자 (returncode=2)\n")
+        _err("잘못된 인자")
         raise SystemExit(EXIT_UNAVAILABLE)
 
 
@@ -610,16 +631,16 @@ def render_text(data: dict) -> str:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not _RUN_ID_RE.match(args.run) or not (0 < args.timeout <= 300):
-        sys.stderr.write("progress_check: 잘못된 인자 (returncode=2)\n")
+        _err("잘못된 인자")
         return EXIT_UNAVAILABLE
     repo_path = Path(args.repo).expanduser()
     try:
         repo_path = repo_path.resolve(strict=True)
     except (OSError, RuntimeError):
-        sys.stderr.write("progress_check: repo 경로 검증 실패 (returncode=2)\n")
+        _err("repo 경로 검증 실패")
         return EXIT_UNAVAILABLE
     if not repo_path.is_dir():
-        sys.stderr.write("progress_check: repo 경로 검증 실패 (returncode=2)\n")
+        _err("repo 경로 검증 실패")
         return EXIT_UNAVAILABLE
 
     repo = str(repo_path)
@@ -655,7 +676,11 @@ def main(argv: list[str] | None = None) -> int:
         rep.check("orca_internal", "error", "Orca 응답 처리 중 내부 오류 (returncode=2)")
 
     data = rep.to_dict()
-    print(json.dumps(data, ensure_ascii=False, indent=2) if args.json else render_text(data))
+    # JSON: ASCII 전용(\uXXXX 이스케이프). 자식 stdout 인코딩(cp949/UTF-8, strict 포함)이나
+    # 부모의 text=True 디코딩과 무관하게 깨지지 않고, json.loads 후 원문이 그대로 복원된다.
+    # 텍스트: 사람용. 현재 스트림 인코딩으로 쓰고 표현 불가 문자만 \uXXXX 로 치환한다.
+    text = json.dumps(data, ensure_ascii=True, indent=2) if args.json else render_text(data)
+    write_safe(sys.stdout, text + "\n")
     return rep.exit_code()
 
 
