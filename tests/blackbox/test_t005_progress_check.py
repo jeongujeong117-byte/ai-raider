@@ -897,16 +897,86 @@ class BlackboxProgressCheckTests(unittest.TestCase):
         self.assertNotIn("Traceback", res.stderr, "Unhandled traceback leaked on unhashable task id")
         self.assertEqual(res.returncode, 2, "Unhashable task id must produce exit code 2")
 
-        # 5. Unhashable list taskId in workers: workers=[{"dispatchId": "ctx_01", "taskId": []}]
+        # 5. Comprehensive field type attacks on task and worker items
+        # task.id (empty string, int, dict)
+        for bad_id in ["", 1234, {"a": 1}]:
+            Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+                json.dumps({"ok": True, "result": {"tasks": [{"id": bad_id, "title": "T-005"}]}}), encoding="utf-8"
+            )
+            res = self._run_cli(["--repo", repo, "--run", "run_poll_bad_task_id", "--orca-command", self.mock_orca_exe, "--json"])
+            self.assertEqual(res.returncode, 2, f"Expected rc 2 for task id={bad_id}")
+            self.assertNotIn("Traceback", res.stderr)
+
+        # task.status and task.title (int, list)
+        for bad_field in [{"status": 123}, {"status": []}, {"title": 123}, {"title": []}]:
+            payload = {"id": "task_valid", "title": "T-005", **bad_field}
+            Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
+                json.dumps({"ok": True, "result": {"tasks": [payload]}}), encoding="utf-8"
+            )
+            res = self._run_cli(["--repo", repo, "--run", "run_poll_bad_task_fields", "--orca-command", self.mock_orca_exe, "--json"])
+            self.assertEqual(res.returncode, 2, f"Expected rc 2 for task={payload}")
+            self.assertNotIn("Traceback", res.stderr)
+
+        # worker fields: dispatchId (empty, list, int), taskId (list, int), state (int), liveness (dict), terminalState (int), outcome (int)
+        bad_worker_fields = [
+            {"dispatchId": ""},
+            {"dispatchId": []},
+            {"dispatchId": 999},
+            {"dispatchId": "d1", "taskId": []},
+            {"dispatchId": "d1", "taskId": 999},
+            {"dispatchId": "d1", "state": 123},
+            {"dispatchId": "d1", "liveness": {"bad": "dict"}},
+            {"dispatchId": "d1", "terminalState": [1, 2]},
+            {"dispatchId": "d1", "outcome": 456},
+        ]
         Path(os.path.join(self.mock_dir, "mock_task_list.json")).write_text(
             json.dumps({"ok": True, "result": {"tasks": []}}), encoding="utf-8"
         )
-        Path(os.path.join(self.mock_dir, "mock_worker_list.json")).write_text(
-            json.dumps({"ok": True, "result": {"workers": [{"dispatchId": "ctx_01", "taskId": []}]}}), encoding="utf-8"
-        )
-        res_worker = self._run_cli(["--repo", repo, "--run", "run_poll_unhashable_worker", "--orca-command", self.mock_orca_exe, "--json"])
-        self.assertNotIn("Traceback", res_worker.stderr, "Unhandled traceback leaked on unhashable worker taskId")
-        self.assertEqual(res_worker.returncode, 2, "Unhashable worker taskId must produce exit code 2")
+        for bw in bad_worker_fields:
+            Path(os.path.join(self.mock_dir, "mock_worker_list.json")).write_text(
+                json.dumps({"ok": True, "result": {"workers": [bw]}}), encoding="utf-8"
+            )
+            res = self._run_cli(["--repo", repo, "--run", "run_poll_bad_worker", "--orca-command", self.mock_orca_exe, "--json"])
+            self.assertEqual(res.returncode, 2, f"Expected rc 2 for worker={bw}")
+            self.assertNotIn("Traceback", res.stderr)
+
+        # nextCursor non-string (int, list, dict)
+        for bad_cursor in [123, ["cursor"], {"cur": 1}]:
+            Path(os.path.join(self.mock_dir, "mock_worker_list.json")).write_text(
+                json.dumps({"ok": True, "result": {"workers": [], "nextCursor": bad_cursor}}), encoding="utf-8"
+            )
+            res = self._run_cli(["--repo", repo, "--run", "run_poll_bad_cursor", "--orca-command", self.mock_orca_exe, "--json"])
+            self.assertEqual(res.returncode, 2, f"Expected rc 2 for nextCursor={bad_cursor}")
+            self.assertNotIn("Traceback", res.stderr)
+
+    def test_18_real_cli_edge_runs_and_missing_commands(self):
+        """Real CLI edge cases: non-existent run, missing executable, and live run against actual repo."""
+        real_repo = str(ROOT)
+
+        # 1. Non-existent run on real repo: returns rc 2 with safe error (no traceback)
+        res_nonexistent = self._run_cli([
+            "--repo", real_repo,
+            "--run", "run_does_not_exist_99999",
+            "--json",
+        ])
+        self.assertEqual(res_nonexistent.returncode, 2)
+        self.assertNotIn("Traceback", res_nonexistent.stderr)
+        data = json.loads(res_nonexistent.stdout)
+        task_check = next(c for c in data["checks"] if c["name"] == "orca_task_list")
+        self.assertEqual(task_check["status"], "error")
+
+        # 2. Non-existent orca command: returns rc 2 with safe error (no traceback)
+        res_missing_cmd = self._run_cli([
+            "--repo", real_repo,
+            "--run", "run_548a284d59da",
+            "--orca-command", "nonexistent-orca-binary-xyz",
+            "--json",
+        ])
+        self.assertEqual(res_missing_cmd.returncode, 2)
+        self.assertNotIn("Traceback", res_missing_cmd.stderr)
+        data_missing = json.loads(res_missing_cmd.stdout)
+        task_check_missing = next(c for c in data_missing["checks"] if c["name"] == "orca_task_list")
+        self.assertEqual(task_check_missing["status"], "error")
 
 
 if __name__ == "__main__":
