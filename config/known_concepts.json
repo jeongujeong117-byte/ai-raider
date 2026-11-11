@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "provenance": "initial_synthetic_draft",
+  "provenance": "user_confirmed",
   "concepts": [
-    "transformer",
-    "lora",
-    "agent",
-    "ocr",
-    "asr",
-    "diffusion",
-    "fine-tuning",
-    "rag",
-    "vector_db",
-    "npu",
-    "vit",
-    "checkpoint"
-  ]
+    "환각",
+    "프롬프트 엔지니어링",
+    "컨텍스트 윈도우",
+    "RAG",
+    "임베딩"
+  ],
+  "aliases": {
+    "환각": ["hallucination"],
+    "프롬프트 엔지니어링": ["prompt engineering"],
+    "컨텍스트 윈도우": ["context window"],
+    "RAG": ["retrieval-augmented generation", "retrieval augmented generation", "검색 증강 생성"],
+    "임베딩": ["embedding", "embeddings"]
+  }
 }
