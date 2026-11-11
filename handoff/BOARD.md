@@ -10,7 +10,7 @@
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | 최종 PASS・develop 병합 완료 | develop (개발 3a38765, QA b4400b7, 병합 c3984b9) | 2 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 수락・T-005 최종 수락 후4차감사 진행 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -145,3 +145,4 @@
 - T-005 Opus3a38765 허용3개/clean/출력수정diff확인. S1 174개(extras skip0), JSON ASCII이스케이프/텍스트backslashreplace, 신규8개인코딩/실제CLI회귀보고. QA ctx_b6edf1df89ce에독립재검증send, Opus완료dispatch released. 반려2유지,이번FAIL시사람검토필요중단.
 - T-005 최종QA b4400b7 허용2개/clean, 원본FAIL/인코딩FAIL이력보존. S0 QA브랜치extras194개/skip0/exit0(57.251초) 재실행후c3984b9통합. 통합extras전체294개/skip0/exit0(58.453초) 확인하여최종수락. 이전284개실패는수정전이력으로유지.
 - S0실제통합CLI cp949:strict/ascii:strict/utf8:strict 모두rc1/JSON파싱성공/stderr0/필수소스오류0. rc1은경고findings정상산출물,실패아님. QA최종dispatch released확인.
+- S4수락후감사 task_66b3804c8c9a/ctx_4aa5eeecd9c0 Sonnetlow ready. T005학습 task_b6a3910ffd97/ctx_f9cb089ad589 Sonnetlow ready. 최종수락후후속2개진행중.
