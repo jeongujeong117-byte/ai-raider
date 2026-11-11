@@ -9,7 +9,7 @@
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 Sonnet high | S1 651cb84 완료・S2 QA 진행 | jeongujeong117-byte/t-004-dev / t-004-qa | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 ready・개발 중 | jeongujeong117-byte/t-005-dev | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 점검 ready・결과 대기 | jeongujeong117-byte/s4-audit | 해당 없음 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 1차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -114,3 +114,5 @@
 - S4 Task task_6d128e5073dd / dispatch ctx_1318677b4450: Sonnet5.5/low, s4-audit, ready.
 - T-005 Task task_02b2e5b96fea / dispatch ctx_ad2fdbb728f9: Sonnet5.5/medium, t-005-dev, ready. T-004 허용 파일과 비중복.
 - T-004 QA ctx_1c08dcaa27b0 유지, 중단/재시작 없음. 완료된 S1 ctx_6f941cb32864는 released/processAction=closed_agent_terminal 확인.
+- S4 1차 5cf6389 수락・로그 develop 병합. 관측 당시 BOARD 배정 지연은 e75dae0에서 해결. t-004-qa 미추적 테스트는 QA 진행 중 산출물로 최종 보고 시 확인. T-002 완료 retained/unverifiable은 worker-show 재확인, 생존 불명으로 자동 종료하지 않음. T-001 QA 합산 혼동 가능성은 과거 보고 이슈로 분리하며 현재 전체131개와 합산하지 않음.
+- 사용자 D-013 지식 답변 수신: 실제 기지식5개 확정. T-006에서 config 갱신, T-011/T-012에서 신개념 쉬운 한국어 뜻풀이 구현. T-004 QA 계약/프로세스는 유지.
