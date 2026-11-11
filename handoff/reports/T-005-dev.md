@@ -49,3 +49,18 @@ python tools/progress_check.py --run <run_id> [--repo <path>] [--orca-command <e
 
 ## 미확인
 Windows `.cmd`→`.exe` 해석은 이 환경(orca.exe 존재)에서만 실행 확인. Linux `orca-ide`/`orca-dev` 기본값은 단위 테스트(mock)만. 실제 live worker 멈춤·테스트 감소 판정은 미구현(위 한계). S2 독립 QA 전 병합 금지.
+
+## 1차 반려 수정 (S0 재현: task id가 list → TypeError)
+- 원인: `_orca_json`이 `items`가 dict 리스트인지만 확인하고 id/title 등 실제 소비 필드의 타입은 검증하지 않아 `title_by_id` dict 키에서 unhashable TypeError.
+- 수정(`tools/progress_check.py`): 소비 경계에서 검증. 최상위가 dict·`ok is True`·`result` dict·`result[key]` list of dict·각 항목 필드 타입(tasks: `id` 비어있지 않은 str 필수, `status`/`title` str|None; workers: `dispatchId` 필수 str, `taskId/state/liveness/terminalState/outcome` str|None)·`nextCursor` str|None. 위반 시 `orca <sub> JSON 파싱 실패` 고정 오류 + exit 2. 추가 안전망으로 `check_orca` 예기치 못한 예외도 `orca_internal` 고정 오류(exit 2)로 처리, traceback/원시 메시지 미출력. shell=False·읽기 전용 allowlist·unknown 계약은 변경 없음.
+- 테스트 +2(총 신규 35개): S0 재현 payload 포함 task/worker 잘못된 타입 21종(최상위 list/scalar/None, result/key/items/필드 타입)이 모두 exit 2 + 파싱 실패 check + 유효 JSON 출력(traceback 없음), 예외 격납 시 `secret` 문자열 미출력. 정상 입력 exit 0 유지.
+
+### 재검증 증거
+| 명령 | rc | 결과 |
+|---|---|---|
+| `python -m unittest tests.test_progress_check` | 0 | 35개 OK |
+| `uv run python -m unittest discover -s tests` | 0 | 166개 OK, **skipped=11 (전부 `optional extra 'mcp' not installed`, MCP stdio 테스트 포함)** |
+| `uv run --extra mcp --extra processing python -m unittest discover -s tests` | 0 | 166개 OK, **skip 0** (MCP stdio 테스트 실제 실행) |
+| 실제 CLI: `progress_check.py --run run_548a284d59da --json` | 1 | findings 15, checks 55 (경고 exit 1은 예상 산출물) |
+| 실제 CLI: `--run run_doesnotexist` | 2 | orca task-list 실패(returncode=1)를 `orca_task_list` error로 고정 문구 보고, 원시 오류 없음 |
+| 실제 CLI: `--orca-command nonexistent-orca-xyz` | 2 | CLI 부재 error 고정 문구 |

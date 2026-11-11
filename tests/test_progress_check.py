@@ -277,6 +277,58 @@ class OrcaTests(Base):
         self.assertTrue(all(f["severity"] == "info" for f in d["findings"]
                             if f["code"] == "TASK_FAILED_HISTORY"))
 
+    def test_wrong_types_fail_safely_exit2(self):
+        """S0 재현 포함: 잘못된 타입은 traceback 없이 고정 오류/exit 2."""
+        good_t = {"ok": True, "result": {"tasks": [{"id": "t1", "status": "completed", "title": "T-005"}]}}
+        good_w = {"ok": True, "result": {"workers": []}}
+        bad_tasks = [
+            {"ok": True, "result": {"tasks": [{"id": [], "title": "T-005"}]}},
+            {"ok": True, "result": {"tasks": [{"id": {"a": 1}, "title": "x"}]}},
+            {"ok": True, "result": {"tasks": [{"title": "x"}]}},
+            {"ok": True, "result": {"tasks": [{"id": "t", "title": 5}]}},
+            {"ok": True, "result": {"tasks": [{"id": "t", "status": []}]}},
+            {"ok": True, "result": {"tasks": ["x"]}},
+            {"ok": True, "result": {"tasks": {}}},
+            {"ok": True, "result": []},
+            {"ok": True, "result": "s"},
+            {"ok": False, "result": {"tasks": []}},
+            [], "scalar", 5, None,
+        ]
+        bad_workers = [
+            {"ok": True, "result": {"workers": [{"dispatchId": []}]}},
+            {"ok": True, "result": {"workers": [{"dispatchId": "d", "taskId": []}]}},
+            {"ok": True, "result": {"workers": [{"dispatchId": "d", "state": 1}]}},
+            {"ok": True, "result": {"workers": [{"dispatchId": "d", "liveness": {}}]}},
+            {"ok": True, "result": {"workers": [{"dispatchId": "d", "terminalState": 3}]}},
+            {"ok": True, "result": {"workers": [{"taskId": "t"}]}},
+            {"ok": True, "result": {"workers": [], "nextCursor": 5}},
+            {"ok": True, "result": {"workers": [[]]}},
+        ]
+        cases = [(t, good_w) for t in bad_tasks] + [(good_t, w) for w in bad_workers]
+        for tdata, wdata in cases:
+            env = self.env()
+            base = env._orca
+
+            def orca(argv, _t=tdata, _w=wdata):
+                return pc.CmdResult("ok", 0, json.dumps(_t if argv[2] == "task-list" else _w))
+            env._orca = orca
+            rc, out = run_main(env, self.dir)
+            d = json.loads(out)  # traceback였다면 예외
+            self.assertEqual(rc, 2, (tdata, wdata))
+            self.assertTrue(any(c["status"] == "error" and "파싱 실패" in c["detail"] for c in d["checks"]))
+        # 정상 입력은 영향 없음
+        env = self.env()
+        env._orca = lambda argv: pc.CmdResult("ok", 0, json.dumps(good_t if argv[2] == "task-list" else good_w))
+        self.assertEqual(run_main(env, self.dir)[0], 0)
+
+    def test_unexpected_exception_is_contained(self):
+        env = self.env()
+        err = io.StringIO()
+        with mock.patch.object(pc, "check_orca", side_effect=RuntimeError("secret-token")),                 contextlib.redirect_stderr(err):
+            rc, out = run_main(env, self.dir)
+        self.assertEqual(rc, 2)
+        self.assertNotIn("secret", out + err.getvalue())
+
     def test_malformed_json_exit2(self):
         rc, d = self.run_json(self.env(orca_stdout="{not json"))
         self.assertEqual(rc, 2)
