@@ -8,7 +8,7 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | 통합 회귀 cp949 출력 실패・2차 반려, 수락 보류 | develop에 67c8961 통합됐으나 검증 실패, 수정 t-005-dev | 2 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | Opus 3차 수정3a38765 도착・최종 QA 재검증 | develop에 67c8961 통합됐으나 검증 실패, 수정 t-005-dev | 2 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
 | S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
@@ -142,3 +142,4 @@
 - Opus재시작 --retry-of ctx_8201f28c7b3a는task_not_startable로시작전거절(이전Dispatch는completed). dispatch-show/worker-show로succeeded・released・exited확인후같은Task task_39014f228445를ready로열어동일t-005-dev에Opus5.5/high ctx_f3470b5bdb1a ready. 반려2회횟수는유지,회피/새Task없음. 최신T-005-opus-fix명세를send로우선전달.
 - QA2차정정은ctx_1382f85450d1에send요청. 최종수락보류이며Opus3차도FAIL이면사람검토필요중단.
 - T-005 QA2차FAIL d2e4a22 허용2파일/clean확인: test19 cp949:strict + ・/emoji/한글fixture에서UnicodeEncodeError/빈stdout RED재현. 첫TypeError test17/edge18보존. Opus ctx_f3470b5bdb1a는live/working이며수정커밋대기,반려2유지.
+- T-005 Opus3a38765 허용3개/clean/출력수정diff확인. S1 174개(extras skip0), JSON ASCII이스케이프/텍스트backslashreplace, 신규8개인코딩/실제CLI회귀보고. QA ctx_b6edf1df89ce에독립재검증send, Opus완료dispatch released. 반려2유지,이번FAIL시사람검토필요중단.
