@@ -1,0 +1,576 @@
+{
+  "schema_version": 1,
+  "known_concepts": [
+    "transformer",
+    "lora",
+    "agent",
+    "ocr",
+    "asr",
+    "diffusion",
+    "fine-tuning",
+    "rag",
+    "vector_db",
+    "npu",
+    "vit",
+    "checkpoint"
+  ],
+  "samples": [
+    {
+      "id": "sample-ig-null-likes",
+      "description": "Instagram post with metrics likes=None to verify null preservation in Store without 0 coercion.",
+      "provenance": "synthetic",
+      "tags": ["instagram", "metrics_null", "tutorial", "vit"],
+      "input": {
+        "platform": "instagram",
+        "post_id": "ig-synth-001",
+        "handle": "example_vision_lab",
+        "url": "https://example.com/instagram/p/ig-synth-001",
+        "posted_at": "2026-08-10T02:00:00+00:00",
+        "text": "Vision Transformer (ViT) fine-tuning guide with synthetic images.",
+        "metrics": {
+          "likes": null,
+          "comments": 4
+        },
+        "media": [
+          {
+            "kind": "image",
+            "url": "https://example.com/media/vit_chart.jpg"
+          }
+        ],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "instagram:ig-synth-001",
+        "preserve_null_metrics": true,
+        "expected_likes": null,
+        "stored_text": "Vision Transformer (ViT) fine-tuning guide with synthetic images.",
+        "in_window": true,
+        "analysis": {
+          "category": "tutorial",
+          "evidence_terms": ["ViT", "transformer", "fine-tuning"],
+          "new_concepts_detected": [],
+          "is_pure_noise": false,
+          "notes": "Explicit educational guide on vision transformer adaptation."
+        }
+      }
+    },
+    {
+      "id": "sample-ig-zero-likes",
+      "description": "Instagram post with metrics likes=0 to verify numeric zero is distinct from null in Store.",
+      "provenance": "synthetic",
+      "tags": ["instagram", "metrics_zero", "model_release", "diffusion"],
+      "input": {
+        "platform": "instagram",
+        "post_id": "ig-synth-002",
+        "handle": "example_vision_lab",
+        "url": "https://example.com/instagram/p/ig-synth-002",
+        "posted_at": "2026-08-10T03:00:00+00:00",
+        "text": "Diffusion model checkpoint update: zero likes received yet.",
+        "metrics": {
+          "likes": 0,
+          "comments": 0
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "instagram:ig-synth-002",
+        "preserve_null_metrics": false,
+        "expected_likes": 0,
+        "stored_text": "Diffusion model checkpoint update: zero likes received yet.",
+        "in_window": true,
+        "analysis": {
+          "category": "model_release",
+          "evidence_terms": ["Diffusion", "checkpoint"],
+          "new_concepts_detected": [],
+          "is_pure_noise": false,
+          "notes": "Announcement of model weights checkpoint update."
+        }
+      }
+    },
+    {
+      "id": "sample-x-empty-text-media",
+      "description": "X post with empty text caption and attached media asset.",
+      "provenance": "synthetic",
+      "tags": ["x", "empty_text", "media_only"],
+      "input": {
+        "platform": "x",
+        "post_id": "x-synth-003",
+        "handle": "synth_ai_dev",
+        "url": "https://example.com/x/status/x-synth-003",
+        "posted_at": "2026-08-12T10:00:00+00:00",
+        "text": "",
+        "metrics": {
+          "likes": 12,
+          "reposts": 3
+        },
+        "media": [
+          {
+            "kind": "image",
+            "url": "https://example.com/media/diagram.png",
+            "status": "downloaded",
+            "local_path": "diagram.png"
+          }
+        ],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "x:x-synth-003",
+        "preserve_null_metrics": false,
+        "expected_likes": 12,
+        "stored_text": "",
+        "in_window": true,
+        "has_media": true,
+        "analysis": {
+          "category": "unclassified_media",
+          "evidence_terms": [],
+          "new_concepts_detected": [],
+          "is_pure_noise": false,
+          "notes": "Media-only post requiring downstream vision OCR/classification."
+        }
+      }
+    },
+    {
+      "id": "sample-youtube-transcription",
+      "description": "YouTube video with speech transcription containing RAG and vector database terminology.",
+      "provenance": "synthetic",
+      "tags": ["youtube", "transcript", "tutorial", "rag"],
+      "input": {
+        "platform": "youtube",
+        "post_id": "yt-synth-004",
+        "handle": "ai_explainer_channel",
+        "url": "https://example.com/youtube/watch?v=yt-synth-004",
+        "posted_at": "2026-08-15T09:00:00+00:00",
+        "text": "Deep Dive into RAG Architecture and Vector DB search.",
+        "metrics": {
+          "views": 1500,
+          "likes": 230
+        },
+        "media": [
+          {
+            "kind": "video",
+            "url": "https://example.com/media/rag_video.mp4",
+            "status": "downloaded",
+            "local_path": "rag_video.mp4"
+          }
+        ],
+        "raw": {
+          "transcript": "In this video we explore Retrieval-Augmented Generation (RAG) using vector_db index and embedding models.",
+          "video_id": "yt-synth-004"
+        }
+      },
+      "expected": {
+        "dedup_key": "youtube:yt-synth-004",
+        "preserve_null_metrics": false,
+        "expected_likes": 230,
+        "stored_text": "Deep Dive into RAG Architecture and Vector DB search.",
+        "in_window": true,
+        "analysis": {
+          "category": "tutorial",
+          "evidence_terms": ["RAG", "vector_db"],
+          "new_concepts_detected": [],
+          "is_pure_noise": false,
+          "notes": "RAG pipeline explanation grounded in title and spoken transcript."
+        }
+      }
+    },
+    {
+      "id": "sample-news-ocr",
+      "description": "News article with hardware announcement and OCR text extracted from infographic.",
+      "provenance": "synthetic",
+      "tags": ["news", "ocr", "hardware", "npu"],
+      "input": {
+        "platform": "news",
+        "post_id": "news-synth-005",
+        "handle": "tech_daily_news",
+        "url": "https://example.com/news/article-005",
+        "posted_at": "2026-08-20T04:30:00+00:00",
+        "text": "AI Semiconductor Startup Reveals Low-Power Edge NPU Architecture.",
+        "metrics": {
+          "reads": 450,
+          "likes": 88
+        },
+        "media": [
+          {
+            "kind": "image",
+            "url": "https://example.com/media/npu_chip.jpg",
+            "ocr_text": "NPU 128-core Tensor Accelerator v2"
+          }
+        ],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "news:news-synth-005",
+        "preserve_null_metrics": false,
+        "expected_likes": 88,
+        "stored_text": "AI Semiconductor Startup Reveals Low-Power Edge NPU Architecture.",
+        "in_window": true,
+        "analysis": {
+          "category": "hardware",
+          "evidence_terms": ["NPU", "Semiconductor"],
+          "new_concepts_detected": ["Semiconductor"],
+          "is_pure_noise": false,
+          "notes": "Hardware chip architecture news grounded in headline and OCR infographic; Semiconductor is not in known_concepts."
+        }
+      }
+    },
+    {
+      "id": "sample-boundary-before-kst",
+      "description": "Post timestamped 1 second before 2026-08-09 00:00 KST boundary (2026-08-08 14:59:59 UTC).",
+      "provenance": "synthetic",
+      "tags": ["gallery", "boundary", "before_window"],
+      "input": {
+        "platform": "gallery",
+        "post_id": "gal-synth-006",
+        "handle": "gallery_curator",
+        "url": "https://example.com/gallery/art/006",
+        "posted_at": "2026-08-08T14:59:59+00:00",
+        "text": "Gallery submission prior to benchmark window boundary.",
+        "metrics": {
+          "views": 5,
+          "likes": null
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "gallery:gal-synth-006",
+        "preserve_null_metrics": true,
+        "expected_likes": null,
+        "stored_text": "Gallery submission prior to benchmark window boundary.",
+        "in_window": false,
+        "boundary_relation": "before",
+        "window_reference": "2026-08-09 to 2026-11-09 KST",
+        "analysis": {
+          "category": "pure_noise",
+          "evidence_terms": [],
+          "new_concepts_detected": [],
+          "is_pure_noise": true,
+          "notes": "General submission without tech content; outside target evaluation window."
+        }
+      }
+    },
+    {
+      "id": "sample-boundary-exact-kst",
+      "description": "Post timestamped exactly on 2026-08-09 00:00 KST boundary (2026-08-08 15:00:00 UTC).",
+      "provenance": "synthetic",
+      "tags": ["gallery", "boundary", "exact_start"],
+      "input": {
+        "platform": "gallery",
+        "post_id": "gal-synth-007",
+        "handle": "gallery_curator",
+        "url": "https://example.com/gallery/art/007",
+        "posted_at": "2026-08-08T15:00:00+00:00",
+        "text": "Gallery submission exactly on benchmark window start boundary.",
+        "metrics": {
+          "views": 10,
+          "likes": null
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "gallery:gal-synth-007",
+        "preserve_null_metrics": true,
+        "expected_likes": null,
+        "stored_text": "Gallery submission exactly on benchmark window start boundary.",
+        "in_window": true,
+        "boundary_relation": "exact_start",
+        "window_reference": "2026-08-09 to 2026-11-09 KST",
+        "analysis": {
+          "category": "pure_noise",
+          "evidence_terms": [],
+          "new_concepts_detected": [],
+          "is_pure_noise": true,
+          "notes": "Boundary test fixture for inclusive window start."
+        }
+      }
+    },
+    {
+      "id": "sample-boundary-after-kst",
+      "description": "Post timestamped 1 second after 2026-08-09 00:00 KST boundary (2026-08-08 15:00:01 UTC).",
+      "provenance": "synthetic",
+      "tags": ["gallery", "boundary", "after_start"],
+      "input": {
+        "platform": "gallery",
+        "post_id": "gal-synth-008",
+        "handle": "gallery_curator",
+        "url": "https://example.com/gallery/art/008",
+        "posted_at": "2026-08-08T15:00:01+00:00",
+        "text": "Gallery submission immediately after benchmark window start boundary.",
+        "metrics": {
+          "views": 12,
+          "likes": null
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "gallery:gal-synth-008",
+        "preserve_null_metrics": true,
+        "expected_likes": null,
+        "stored_text": "Gallery submission immediately after benchmark window start boundary.",
+        "in_window": true,
+        "boundary_relation": "after_start",
+        "window_reference": "2026-08-09 to 2026-11-09 KST",
+        "analysis": {
+          "category": "pure_noise",
+          "evidence_terms": [],
+          "new_concepts_detected": [],
+          "is_pure_noise": true,
+          "notes": "Boundary test fixture immediately inside window start."
+        }
+      }
+    },
+    {
+      "id": "sample-recollect-original",
+      "description": "Hugging Face model initial crawl prior to re-collection update.",
+      "provenance": "synthetic",
+      "tags": ["huggingface", "dedup_pair", "original", "model_release"],
+      "input": {
+        "platform": "huggingface",
+        "post_id": "hf-synth-009",
+        "handle": "hf_org_synth",
+        "url": "https://example.com/huggingface/models/hf-synth-009",
+        "posted_at": "2026-09-01T12:00:00+00:00",
+        "text": "Release of Synthetic-LLM-7B weights under Apache-2.0 license.",
+        "metrics": {
+          "downloads": 100,
+          "likes": 15
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "huggingface:hf-synth-009",
+        "preserve_null_metrics": false,
+        "expected_likes": 15,
+        "stored_text": "Release of Synthetic-LLM-7B weights under Apache-2.0 license.",
+        "in_window": true,
+        "analysis": {
+          "category": "model_release",
+          "evidence_terms": ["weights"],
+          "new_concepts_detected": ["weights"],
+          "is_pure_noise": false,
+          "notes": "Initial release weights announcement; weights is not in known_concepts."
+        }
+      }
+    },
+    {
+      "id": "sample-recollect-updated",
+      "description": "Hugging Face model re-collected crawl with updated metrics and text, sharing same (platform, post_id).",
+      "provenance": "synthetic",
+      "tags": ["huggingface", "dedup_pair", "updated", "model_release"],
+      "input": {
+        "platform": "huggingface",
+        "post_id": "hf-synth-009",
+        "handle": "hf_org_synth",
+        "url": "https://example.com/huggingface/models/hf-synth-009",
+        "posted_at": "2026-09-01T12:00:00+00:00",
+        "text": "Release of Synthetic-LLM-7B weights under Apache-2.0 license (v1.1 checkpoint update).",
+        "metrics": {
+          "downloads": 450,
+          "likes": 50
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "huggingface:hf-synth-009",
+        "preserve_null_metrics": false,
+        "expected_likes": 50,
+        "stored_text": "Release of Synthetic-LLM-7B weights under Apache-2.0 license (v1.1 checkpoint update).",
+        "in_window": true,
+        "overwrites_previous": true,
+        "analysis": {
+          "category": "model_release",
+          "evidence_terms": ["weights", "checkpoint"],
+          "new_concepts_detected": ["weights"],
+          "is_pure_noise": false,
+          "notes": "Updated checkpoint release for existing repository; checkpoint is known, weights is new."
+        }
+      }
+    },
+    {
+      "id": "sample-github-large-unicode",
+      "description": "GitHub repository with large unicode text payload expanded from repeat_spec.",
+      "provenance": "synthetic",
+      "tags": ["github", "large_payload", "unicode", "code_repository"],
+      "input": {
+        "platform": "github",
+        "post_id": "gh-synth-010",
+        "handle": "synth_developer",
+        "url": "https://example.com/github/synth_developer/lora-fine-tuner",
+        "posted_at": "2026-09-10T08:00:00+00:00",
+        "text": "LoRA fine-tuning script repository for multimodal agent models.",
+        "repeat_spec": {
+          "base_text": "LoRA 어댑터 미세조정(Fine-Tuning) 대형 유니코드 벤치마크 테스트 항목입니다. Unicode: 🚀 🤖 ⚡.\n",
+          "repeat_count": 200
+        },
+        "metrics": {
+          "stars": 42,
+          "forks": 8,
+          "likes": 42
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "github:gh-synth-010",
+        "preserve_null_metrics": false,
+        "expected_likes": 42,
+        "in_window": true,
+        "expanded_min_length": 10000,
+        "analysis": {
+          "category": "code_repository",
+          "evidence_terms": ["LoRA", "fine-tuning", "agent"],
+          "new_concepts_detected": [],
+          "is_pure_noise": false,
+          "notes": "Source code repository for fine-tuning scripts; all concepts known."
+        }
+      }
+    },
+    {
+      "id": "sample-rate-limit-error",
+      "description": "Simulated rate limit error sample verifying token redaction in task status.",
+      "provenance": "synthetic",
+      "tags": ["x", "mock_error", "rate_limit", "security"],
+      "input": {
+        "platform": "x",
+        "post_id": "x-synth-011",
+        "handle": "rate_limited_account",
+        "url": "https://example.com/x/status/x-synth-011",
+        "posted_at": "2026-09-15T00:00:00+00:00",
+        "text": "Mock rate limit error simulation test sample.",
+        "metrics": {
+          "likes": 1
+        },
+        "media": [],
+        "raw": {},
+        "simulated_error": {
+          "type": "RateLimitError",
+          "status_code": 429,
+          "raw_message": "Rate limit exceeded. Bearer SECRET_API_KEY_NEVER_LEAK",
+          "redacted_pattern": "SECRET_API_KEY_NEVER_LEAK"
+        }
+      },
+      "expected": {
+        "dedup_key": "x:x-synth-011",
+        "preserve_null_metrics": false,
+        "expected_likes": 1,
+        "stored_text": "Mock rate limit error simulation test sample.",
+        "in_window": true,
+        "error_state": "error",
+        "redact_token": "SECRET_API_KEY_NEVER_LEAK",
+        "analysis": {
+          "category": "pure_noise",
+          "evidence_terms": [],
+          "new_concepts_detected": [],
+          "is_pure_noise": true,
+          "notes": "Error test probe; non-technical content."
+        }
+      }
+    },
+    {
+      "id": "sample-chatter-with-tech-grounding",
+      "description": "Casual chatter post containing genuine practical technology usage, strictly grounded in text evidence.",
+      "provenance": "synthetic",
+      "tags": ["gallery", "chatter_tech", "evidence_grounding", "transformer"],
+      "input": {
+        "platform": "gallery",
+        "post_id": "gal-synth-012",
+        "handle": "casual_blogger",
+        "url": "https://example.com/gallery/chatter/012",
+        "posted_at": "2026-09-20T11:00:00+00:00",
+        "text": "오늘 점심은 라면 먹었다. 오후에는 transformer 어텐션 메커니즘 코드를 실습해봤는데 재밌었다.",
+        "metrics": {
+          "likes": 2
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "gallery:gal-synth-012",
+        "preserve_null_metrics": false,
+        "expected_likes": 2,
+        "stored_text": "오늘 점심은 라면 먹었다. 오후에는 transformer 어텐션 메커니즘 코드를 실습해봤는데 재밌었다.",
+        "in_window": true,
+        "analysis": {
+          "category": "practical_experiment",
+          "evidence_terms": ["transformer", "어텐션"],
+          "new_concepts_detected": ["어텐션"],
+          "applied_usage": "transformer 어텐션 메커니즘 코드를 실습",
+          "is_pure_noise": false,
+          "notes": "Casual chatter containing real tech experimentation explicitly grounded in source text."
+        }
+      }
+    },
+    {
+      "id": "sample-pure-chatter-noise",
+      "description": "Pure casual chatter without any technical references; must not fabricate technology keywords.",
+      "provenance": "synthetic",
+      "tags": ["gallery", "pure_noise", "no_tech"],
+      "input": {
+        "platform": "gallery",
+        "post_id": "gal-synth-013",
+        "handle": "casual_blogger",
+        "url": "https://example.com/gallery/chatter/013",
+        "posted_at": "2026-09-21T07:00:00+00:00",
+        "text": "오늘 날씨가 정말 화창하네요. 주말에 등산 다녀왔습니다!",
+        "metrics": {
+          "likes": 5
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "gallery:gal-synth-013",
+        "preserve_null_metrics": false,
+        "expected_likes": 5,
+        "stored_text": "오늘 날씨가 정말 화창하네요. 주말에 등산 다녀왔습니다!",
+        "in_window": true,
+        "analysis": {
+          "category": "pure_noise",
+          "evidence_terms": [],
+          "new_concepts_detected": [],
+          "is_pure_noise": true,
+          "notes": "Pure chatter with zero tech content; ground truth confirms is_pure_noise without hallucinated concepts."
+        }
+      }
+    },
+    {
+      "id": "sample-x-new-concept-and-idea",
+      "description": "Casual chatter on X introducing a novel concept outside known_concepts with applied practical idea.",
+      "provenance": "synthetic",
+      "tags": ["x", "chatter_tech", "new_concepts", "practical_idea"],
+      "input": {
+        "platform": "x",
+        "post_id": "x-synth-015",
+        "handle": "research_watcher",
+        "url": "https://example.com/x/status/x-synth-015",
+        "posted_at": "2026-09-25T05:00:00+00:00",
+        "text": "친구들과 카페에서 수다 떨다가 flash_attention 최적화 기법을 온디바이스 agent에 적용하는 아이디어를 떠올림.",
+        "metrics": {
+          "likes": 8
+        },
+        "media": [],
+        "raw": {}
+      },
+      "expected": {
+        "dedup_key": "x:x-synth-015",
+        "preserve_null_metrics": false,
+        "expected_likes": 8,
+        "stored_text": "친구들과 카페에서 수다 떨다가 flash_attention 최적화 기법을 온디바이스 agent에 적용하는 아이디어를 떠올림.",
+        "in_window": true,
+        "analysis": {
+          "category": "practical_experiment",
+          "evidence_terms": ["agent", "flash_attention"],
+          "new_concepts_detected": ["flash_attention"],
+          "applied_usage": "flash_attention 최적화 기법을 온디바이스 agent에 적용하는 아이디어",
+          "is_pure_noise": false,
+          "notes": "Casual chatter with novel practical idea; flash_attention is not in known_concepts so detected as new concept."
+        }
+      }
+    }
+  ]
+}
