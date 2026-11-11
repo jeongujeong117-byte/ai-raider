@@ -978,6 +978,61 @@ class BlackboxProgressCheckTests(unittest.TestCase):
         task_check_missing = next(c for c in data_missing["checks"] if c["name"] == "orca_task_list")
         self.assertEqual(task_check_missing["status"], "error")
 
+    # --------------------------------------------------------------------------
+    # 11. Windows CP949 / Unicode Attack (RED Regression)
+    # --------------------------------------------------------------------------
+
+    def test_19_cp949_strict_unicode_board_fixture_attack(self):
+        """CLI under cp949:strict stdout encoding must handle middle dot (・), emoji, and Korean without UnicodeEncodeError."""
+        if not self.mock_orca_exe:
+            self.skipTest("C# compiler required")
+        repo = os.path.join(self.test_dir, "cp949_attack_repo")
+        os.makedirs(repo)
+        c1 = self._init_git_repo(repo, branch="develop")
+        c2 = self._commit(repo, "feat: dev commit", "f2.txt", "2")
+        c3 = self._commit(repo, "test: qa commit", "f3.txt", "3")
+
+        # Fixture with Katakana middle dot (・), emoji (🔥, 🚀), and Korean in task title, status, and branch
+        rows = [
+            f"| T-001 | 특수문자・이모지 \U0001F525 | S2 QA | 진행 중 ({c2[:12]}, {c3[:12]}) 완료・진행 \U0001F680 | dev・feature | 0 |"
+        ]
+        self._write_board(repo, rows)
+
+        env = dict(self.env)
+        env["PYTHONIOENCODING"] = "cp949:strict"
+
+        # 1. JSON mode under cp949:strict
+        cmd_json = [
+            sys.executable, str(CLI_PATH),
+            "--repo", repo,
+            "--run", "run_cp949_attack",
+            "--orca-command", self.mock_orca_exe,
+            "--json",
+        ]
+        proc = subprocess.run(cmd_json, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+        stdout_text = proc.stdout.decode("utf-8", errors="replace")
+        stderr_text = proc.stderr.decode("cp949", errors="replace")
+
+        self.assertNotIn("UnicodeEncodeError", stderr_text, "UnicodeEncodeError raised on stdout under cp949:strict")
+        self.assertNotIn("Traceback", stderr_text, "Unhandled traceback leaked on cp949 stdout")
+        self.assertIn(proc.returncode, (0, 1), f"Unexpected crash returncode {proc.returncode}")
+        self.assertTrue(len(stdout_text) > 0, "stdout must not be empty on cp949 stdout")
+        data = json.loads(stdout_text)
+        self.assertEqual(data["run_id"], "run_cp949_attack")
+
+        # 2. Text mode under cp949:strict
+        cmd_text = [
+            sys.executable, str(CLI_PATH),
+            "--repo", repo,
+            "--run", "run_cp949_attack_text",
+            "--orca-command", self.mock_orca_exe,
+        ]
+        proc_text = subprocess.run(cmd_text, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+        stderr_text_mode = proc_text.stderr.decode("cp949", errors="replace")
+        self.assertNotIn("UnicodeEncodeError", stderr_text_mode, "UnicodeEncodeError raised in text mode under cp949:strict")
+        self.assertNotIn("Traceback", stderr_text_mode, "Unhandled traceback leaked in text mode")
+        self.assertIn(proc_text.returncode, (0, 1))
+
 
 if __name__ == "__main__":
     unittest.main()
