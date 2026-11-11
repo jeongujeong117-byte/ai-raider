@@ -18,7 +18,7 @@
 | source_agents.py의 공통 `SourceAgent`, 날짜/post 도우미 | `agents/source_agents.py` |
 | 경로·시간 도우미 | `core/common.py` (ROOT, DATA, PRIVATE, KST, now) |
 
-루트의 `source_manager.py`, `source_tools.py`, `media_store.py`, `post_processing.py`, `github_agent.py`, `source_agents.py`는 짧은 "안내판" 파일로 남았다. 줄 수는 `core/` 7개 파일 합계와 `agents/` 9개 파일 합계가 모두 이 구조를 보여 준다(core 7개, agents 9개는 QA가 wheel에서 확인).
+루트의 `source_manager.py`, `source_tools.py`, `media_store.py`, `post_processing.py`, `github_agent.py`, `source_agents.py`는 짧은 "안내판" 파일로 남았다. 현재 `core/`에는 파일 7개, `agents/`에는 9개가 있다(QA가 wheel에서도 확인).
 
 ## 3. 루트 `raider.py`의 책임
 
