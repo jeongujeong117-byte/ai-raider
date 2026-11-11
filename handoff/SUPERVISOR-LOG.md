@@ -124,3 +124,40 @@
 | T-006 | 완료 | 283d62e/298ece3, 38f911b, QA 231 보고, config 직접 확인 | LLM 실제 사용 단계 미구현(T-011/T-012) |
 | T-007~T-020 | 미착수 | task 없음 | 선행조건 |
 전체 완료율은 계산하지 않는다.
+
+---
+
+# 4차 점검 · T-005 최종 수락 후
+
+- 관측: 2026-11-12, develop=92ec6e3, master=origin/master(로컬 ref)=0be384f. Run run_548a284d59da. 판단은 `git show develop:` 최신 BOARD/ROADMAP과 실제 git/Orca/코드 대조. 테스트 직접 실행 없음, 보고의 명령/rc/수치만 대조. 이전 로그 보존.
+
+## 정상 확인
+- T-005 최종: 3a38765(Opus 수정)・b4400b7(QA PASS)・c3984b9(통합) 및 이전 0b7b045/7e1e5be 모두 develop 조상. 수락 기록 92ec6e3.
+- 코드: develop의 tools/progress_check.py에 ensure_ascii/backslashreplace 인코딩 처리가 존재(문자열 grep 수준 확인, 동작은 재현하지 않음). 3a38765 변경은 허용 3개 파일, b4400b7 QA는 2개 파일.
+- 테스트 수 시점 정합(모두 보고/BOARD 수치, 재현 안 함): 231(T-006 통합) → T-005 통합 후 294(extras, skip 0, exit 0, 58.453초). S0 QA 브랜치 194개/skip0/exit0. 감소 없음. 이전 통합 284개 실패(1 error/1 failure, exit1)는 수정 전 이력으로 보존되어 있고 현재 수치 294와 구분되어 있다.
+- 이력 보존: 1차 반려(손상 JSON id=[] TypeError), 2차 반려(cp949 UnicodeEncodeError, QA FAIL d2e4a22), 3차 Opus high 수정으로 해결. 반려 2회 후 3차 통과이며 3회차 FAIL(사람 검토 중단) 조건에 해당하지 않음. 승격 규칙(2회 반려→Opus high)을 따름.
+- 실제 CLI: S0 기록상 cp949/ascii/utf8 strict에서 JSON 파싱 성공, stderr 0, 필수 소스 오류 0. rc1은 경고 findings가 있는 정상 산출물이며 실패 아님(BOARD 설명과 일치). 직접 재현은 하지 않음.
+- Orca 실패 task 구분: task_6ee8fa23c2ad(T-002), task_ccb6cab3e1ce・task_b54afdb62b59(T-005)는 status failed이지만 QA의 의도적 FAIL 정정 이력이고 이후 PASS로 해결. 최종 실패가 아님. failed dispatch 3건은 liveness=unverifiable(프로세스 생존 확인 못 함이며 종료 판단 근거는 아님).
+- master/push: 로컬 ref에서 master 변경, 병합 흔적 없음.
+- 현재 live・실제 작업: T-005 학습 문서 ctx_f9cb089ad589(terminal retained이나 state=ready, outcome=in_progress, live), 본 S4. 완료 워커(T-005 개발/QA 등)는 released/exited로 구분. 다른 live 작업 없음.
+- 워크트리: 관측한 등록 worktree 모두 clean(미커밋 변경 출력 없음).
+
+## 이상
+1. 없음(새 규칙 위반 없음). 참고: T-005 학습 워커의 retained는 live 작업 중 상태이며 열린 채 남은 완료 워커가 아님.
+2. T-002 ctx_c64264f2869c 등 과거 unverifiable dispatch의 생존은 여전히 확인 못 함(반복 항목).
+
+## 권고
+- 이후 병합마다 develop 기준 extras 전체 회귀 수치를 시점과 함께 분리 기록(현재 294).
+- 3회 반려까지 간 T-005 사례를 교훈으로, 이후 파일 출력/인코딩 계약은 spec 단계에서 cp949 등 환경 의존을 명시.
+
+## 확인 못 함
+- 원격 push 실제 상태(fetch 안 함). unverifiable dispatch 생존. 테스트 및 CLI 동작의 독립 재현(294/194/rc1 및 인코딩 3종은 BOARD 기록 대조만). 실계정/사용자 DB 상태. T-005 학습 문서 결과.
+
+## ROADMAP 현재 위치
+| ID | 상태 | 근거 |
+|---|---|---|
+| T-000~T-006 | 완료 | 각 병합 develop 조상(T-005 c3984b9, T-006 38f911b) |
+| S4-AUDIT | 반복 항목(본 4차) | 이 로그 |
+| T-007 | 다음 후보, 아직 미착수 | task/브랜치 없음, 부모 추가 수집 금지 |
+| T-008~T-020 | 미착수 | 선행조건 대기, task 없음 |
+전체 완료율은 계산하지 않는다.
