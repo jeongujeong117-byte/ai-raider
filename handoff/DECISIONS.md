@@ -21,3 +21,13 @@ S1은 기준·완료 회귀 결과와 로컬 HTTP smoke 결과를 보고한다. 
 레드팀 2회 반려 시 같은 워크트리에서 retry-of로 Opus high로 승격하고 3회차도 FAIL이면 중단하여 '사람 검토 필요'로 보고한다. 이 규칙이 이전 '3회 초과' 규칙을 대체한다.
 
 T-000 Opus dispatch ctx_8d1667c5e8bd를 사용자 지시로 worker-stop했고 stopped/processAction=closed_agent_terminal을 확인했다. 구현 커밋은 없고 루트 8개 파일 수정 및 미추적 agents/core를 확인했다. 변경은 보존하고 같은 Task·워크트리에서 Sonnet medium으로 재시작한다.
+
+## D-005 · 2026-11-11 · T-000 수락과 병렬 작업 경계
+
+개발 c4783ac와 QA ccec489의 PASS 증거를 확인하고 S0 재검증(회귀 50개+블랙박스 7개) 후 develop에 병합했다. 병합 뒤 동일 전체 테스트도 통과했다. S3는 Sonnet low로 병합 결과 설명만 작성한다.
+
+T-001은 agents/base_supervisor.py에 주입형 상태 감시·제한된 재시도·상태 기록 기반을 구축한다. 기존 수집기와 대시보드 연결은 후속 통합으로 분리하여 T-002와 수정 파일을 공유하지 않는다. 실제 Edge 우회는 이번에 실행/구현하지 않고 callback으로 연결 지점만 제공한다.
+
+T-002는 SQLite mode=ro 기반 stdio MCP 조회만 제공한다. AI 분석과 OCR processing은 구분한다. 현재 분석 이력이 없으면 모두 미분석이며, 미래 post_analyses(platform,post_id) 이력이 있으면 해당 쌍을 제외하는 읽기 계약만 정의한다. 테이블을 생성하지 않는다. MCP 의존성/패키지 설정 수정은 T-002 전용이다.
+
+T-003은 합성 gold dataset과 블랙박스 틀만 소유한다. 미래 분석 정답은 기준안으로 표시하고 미구현 하네스의 성공을 주장하지 않는다. S1-A/S1-B는 최대 2개이며 S2/S3를 합쳐 동시 워커 4개 한도다.

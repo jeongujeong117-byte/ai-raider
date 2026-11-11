@@ -1,11 +1,11 @@
-# 작업 현황
+﻿# 작업 현황
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
-| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-000-dev | 0 |
-| T-001 | 수집기 상태 4종 및 감시 | S1-A | T-000 PASS·병합 대기 | 미정 | 0 |
-| T-002 | 조회 전용 MCP 도구 | S1-B | T-000 PASS·병합 대기 | 미정 | 0 |
-| T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 | T-000 PASS·병합 대기 | 미정 | 0 |
+| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | PASS·develop 병합 완료, S3 배정 준비 | develop (개발 c4783ac, QA ccec489) | 0 |
+| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium | 명세 확정·배정 준비 | 미정 | 0 |
+| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium | 명세 확정·배정 준비 | 미정 | 0 |
+| T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 명세 확정·배정 준비 | 미정 | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
 
@@ -47,3 +47,11 @@
 - 자식 워크트리: `C:/Users/jeong/orca/workspaces/my-project/t-000-qa`
 - 모델/effort: 사용자 정책 예외에 따라 Antigravity 자체 기본 설정.
 - 시작 영수증 ready. Windows에서 Antigravity structured chat 미지원으로 Orca가 terminal worker로 시작함. 제어는 orchestration만 사용한다.
+
+## T-000 수락 및 통합
+
+- S2 PASS: 개발 c4783ac 검증, QA ccec489. 기존 50개+새 블랙박스 7개, HTTP smoke, wheel 콘솔 엔트리포인트, Orca 브라우저 3개 화면 검증 보고 확인.
+- S0가 QA 워크트리에서 50+7개를 재실행하고, 개발/QA 브랜치를 develop에 병합한 뒤 다시 50+7개 전체 통과를 확인했다.
+- 실제 SNS 수집 및 실엔진 OCR/GPU는 미검증. master 병합/push 없음.
+- 다음 명세: T-001/T-002/T-003 병렬, T-000-learn(S3).
+
