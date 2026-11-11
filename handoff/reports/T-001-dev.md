@@ -34,3 +34,8 @@ init, ok, rate_limited, session_expired, blocked, fallback_used, fallback_error,
 
 ## 범위 밖 필요 사항
 기존 수집기/대시보드에 Supervisor 연결, Edge fallback 구현은 후속 통합 작업.
+
+## 1차 반려 수정
+- fallback 직전 stop 검사: operation이 stop.set 후 Blocked를 올리면 SupervisorStopped, fallback 호출 0 (BLOCKED_FALLBACK 상태는 기록됨).
+- 상태 파일 복원 시 reason을 고정 코드 집합으로 제한, 그 외는 ValueError(내용 미출력), 파일 미덮어쓰기.
+- 회귀 테스트 2개 추가(총 18개). 전체 스위트 68 tests, blackbox 7 tests 모두 exit 0, git diff --check exit 0.
