@@ -105,3 +105,9 @@ S4 2차 감사5dbbd32와 S3 학습49bef5d를 읽고 수락・병합했다. S4 �
 ## D-018 · 2026-11-12 · T-006 개발 검토
 
 283d62e 사용자5개/정확한alias・synthetic12개 분리를 확인, 아직 QA전 미수락. aliases={}는 호환 허용하고 key별 빈 alias목록 거부는 불필요한 항목 방지로 수락한다. 기존 테스트 변경은 승인된 config/provenance 가정에 한정됐다. S1의 MCP포함 전체회귀 누락은 독립 QA 필수검증으로 보완한다. 신규16개+기존1개 증가 수치를 구분한다.
+
+## D-019 · 2026-11-12 · T-006 수락 및 T-005 1차 반려
+
+T-006 개발283d62e/QA298ece3를38f911b로 수락・통합했다. S0 병합전후 전체231개/skip0/exit0. 실제 사용자5개와alias를 적용하고 합성12개는fixture로 보존한다. 자동추출/뜻풀이는후속.
+
+T-005 PASS7e1e5be는 미수락. 손상Orca JSON의 tasks 원소 id=[]가 _orca_json의 dict원소 검사만 통과한 뒤 title_by_id dict키에서 TypeError를 일으킴을 S0가 unittest.mock 주입으로 재현했다. 필수파싱실패 exit2 계약위반. S1 1차반려(Sonnet medium), QA FAIL정정 및 RED회귀 요청. 첫PASS/실패이력을 보존하며 수정전 병합하지 않는다.

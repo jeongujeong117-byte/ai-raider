@@ -8,8 +8,8 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 0b7b045 완료・S2 QA 진행 | jeongujeong117-byte/t-005-dev | 0 |
-| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | S1 283d62e 완료・S2 QA 진행 | jeongujeong117-byte/t-006-dev | 0 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | QA PASS 미수락・손상 Task ID TypeError 1차 반려 | jeongujeong117-byte/t-005-dev | 1 |
+| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
 | S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 2차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
@@ -129,3 +129,5 @@
 - T-004 학습49bef5d 수락・develop 병합. 개발보고 필수필드15개 표기와 코드/QA16개 불일치를 문서에서 명시, 코드16개가 기준. 합성12개/T-006 사용자5개/미검증 LLM 경계를 확인. S4와 S3 완료 dispatch released 확인.
 - T-006 283d62e 허용6개만 변경・clean. 사용자5개/alias config 및 합성gold 불변 확인. S1은 processing216개/skip11, MCP포함 필수회귀 미실행이므로 QA에 명시. 신규모듈16개+기존모듈1개 증가=총17개 증가, 보고서의 신규17개 표현과 구분.
 - T-006 QA task_116fedbd0567 / ctx_a5f9e0a1ce7a, Antigravity t-006-qa ready. T-005 QA와 병행하며 결과 전 병합하지 않음.
+- T-006 298ece3 허용2개/clean 확인. QA 기본231개 skip11/전체extras231개 skip0 보고. S0 QA브랜치231개 및38f911b 통합후231개를 extras포함 재실행, OK/skip0/exit0(10.148초).
+- T-005 QA7e1e5be는 미수락. S0 read-only probe로 tasks=[{id:[],title:T-005}] 주입 시 check_orca에서 UNHANDLED TypeError 재현. 기대: 파싱실패 안전출력/exit2. 타입오염 필드/최상위 JSON을 검증하도록 S1 1차반려・S2 FAIL정정 요청.
