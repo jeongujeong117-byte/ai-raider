@@ -13,3 +13,11 @@
 ## D-003 · 2026-11-11 · 검증과 병합
 
 S1은 기준·완료 회귀 결과와 로컬 HTTP smoke 결과를 보고한다. S2는 개발 브랜치에서 별도 검증하고 PASS/FAIL 증거를 제출한다. S0는 PASS를 확인한 뒤 전체 회귀를 재실행하고 develop에 병합한다. 실제 Instagram·X 접근은 어떤 검증에도 포함하지 않는다.
+
+## D-004 · 2026-11-11 · 사용자 모델 정책 변경
+
+사용자가 제공한 S0-model-policy.md 전체를 ROLES의 팀 구성 아래 모델 정책으로 추가했다. 기존 역할 프롬프트의 모델 표기보다 이 정책이 우선한다. S1 기본은 Sonnet medium, T-004는 Sonnet high, Phase 2 프롬프트/판정 설계 및 Phase 3 역공학 설계는 Opus high, S3는 Sonnet low다. Antigravity는 자체 모델 설정을 사용한다. 그 외 모든 워커 시작은 model과 effort를 명시하고 spec 머리말에도 기록한다. 표에 없는 설계 판단이 큰 새 작업에 Opus를 쓰려면 먼저 사용자에게 묻는다.
+
+레드팀 2회 반려 시 같은 워크트리에서 retry-of로 Opus high로 승격하고 3회차도 FAIL이면 중단하여 '사람 검토 필요'로 보고한다. 이 규칙이 이전 '3회 초과' 규칙을 대체한다.
+
+T-000 Opus dispatch ctx_8d1667c5e8bd를 사용자 지시로 worker-stop했고 stopped/processAction=closed_agent_terminal을 확인했다. 구현 커밋은 없고 루트 8개 파일 수정 및 미추적 agents/core를 확인했다. 변경은 보존하고 같은 Task·워크트리에서 Sonnet medium으로 재시작한다.

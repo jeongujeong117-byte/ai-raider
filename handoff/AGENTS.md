@@ -1,6 +1,7 @@
 # AI Raider 공통 작업 규칙
 
 - 최상위 역할·절차는 `handoff/ROLES.md`를 따른다. 각 작업은 S0가 발행한 spec을 기준으로 수행한다.
+- ROLES의 모델 정책은 기존 팀 구성/프롬프트 모델 표기보다 우선한다. 워커 시작 시 작업별 model/effort를 명시하고 spec 머리말에도 기록한다. Antigravity는 자체 설정 모델을 사용한다. 레드팀 2회 반려 시 3회차는 같은 워크트리에서 Opus high로 재시작하고, 3회차 FAIL이면 중단하여 '사람 검토 필요'를 보고한다.
 - S0만 `handoff/BOARD.md`, `handoff/DECISIONS.md`를 수정한다. S0는 제품 코드를 구현하지 않는다.
 - S1은 spec의 정확한 허용 경로만 수정한다. 범위 확대·설계 변경은 먼저 Orca `ask`로 S0에 질문하고 답을 기다린다.
 - S2는 제품 코드와 기존 테스트를 수정하지 않는다. `tests/blackbox/`, 지정된 `handoff/reviews/` 보고서만 작성한다.
