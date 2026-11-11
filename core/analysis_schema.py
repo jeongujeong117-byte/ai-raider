@@ -158,25 +158,48 @@ class AnalysisResult(BaseModel):
 
         원문 근거 검증(모델 검증)과 별도 호출이다. 출력값은 변경하지 않는다.
         """
-        known_keys = {_term_key(c) for c in known.concepts}
+        known_keys = known.known_keys()
         already_known = [t for t in self.new_concepts_detected if _term_key(t) in known_keys]
         if already_known:
             raise ValueError(f"new_concepts_detected contains known concepts: {already_known}")
 
 
 class KnownConcepts(BaseModel):
+    """기지식 사전. provenance는 초기 합성 초안 또는 사용자 확정본.
+
+    aliases: canonical(concepts의 기존 원소) -> 동의 표기 목록. 기본값 {}.
+    canonical/alias는 strip+casefold 기준으로 서로 중복/충돌할 수 없다.
+    """
+
     model_config = _STRICT
 
     schema_version: Version1
-    provenance: Literal["initial_synthetic_draft"]
+    provenance: Literal["initial_synthetic_draft", "user_confirmed"]
     concepts: Annotated[StrList, Field(min_length=1)]
+    aliases: dict[NonBlankStr, Annotated[StrList, Field(min_length=1)]] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def _no_duplicates(self) -> "KnownConcepts":
+    def _check_concepts_and_aliases(self) -> "KnownConcepts":
         keys = [_term_key(c) for c in self.concepts]
         if len(set(keys)) != len(keys):
             raise ValueError("concepts must not contain duplicates (strip+casefold)")
+        seen = set(keys)
+        for canonical, alias_list in self.aliases.items():
+            if canonical not in self.concepts:
+                raise ValueError(f"aliases key {canonical!r} is not an existing concept")
+            for alias in alias_list:
+                key = _term_key(alias)
+                if key in seen:
+                    raise ValueError(f"alias {alias!r} duplicates or conflicts with another concept/alias")
+                seen.add(key)
         return self
+
+    def known_keys(self) -> set[str]:
+        """canonical과 alias 전체의 strip+casefold 키 집합."""
+        keys = {_term_key(c) for c in self.concepts}
+        for alias_list in self.aliases.values():
+            keys.update(_term_key(a) for a in alias_list)
+        return keys
 
 
 def load_known_concepts(path: str | Path) -> KnownConcepts:

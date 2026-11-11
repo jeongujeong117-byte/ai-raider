@@ -647,12 +647,14 @@ class AnalysisSchemaBlackboxTests(unittest.TestCase):
         self.assertEqual(kc.provenance, "initial_synthetic_draft")
         self.assertEqual(len(kc.concepts), 2)
 
-        # Wrong provenance
-        with self.assertRaises(ValidationError):
-            KnownConcepts.model_validate({
-                **valid_data,
-                "provenance": "user_confirmed",
-            })
+        # T-006: user_confirmed is now a valid provenance (user-approved D-013); other values stay rejected
+        KnownConcepts.model_validate({**valid_data, "provenance": "user_confirmed"})
+        for bad_prov in ("user_verified", "", None):
+            with self.assertRaises(ValidationError):
+                KnownConcepts.model_validate({
+                    **valid_data,
+                    "provenance": bad_prov,
+                })
 
         # Empty concepts list
         with self.assertRaises(ValidationError):
@@ -705,8 +707,9 @@ class AnalysisSchemaBlackboxTests(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 load_known_concepts(invalid_file)
 
-    def test_18_gold_fixture_known_concepts_equivalence(self):
-        """config/known_concepts.json must match the 12 concepts in gold_samples.json."""
+    def test_18_config_user_confirmed_and_gold_synthetic_independent(self):
+        """T-006 revised contract (user-approved D-013): config is the user-confirmed 5 concepts;
+        the synthetic 12 in gold_samples.json remain a separately valid model."""
         config_path = ROOT / "config" / "known_concepts.json"
         gold_path = ROOT / "tests" / "blackbox" / "fixtures" / "gold_samples.json"
 
@@ -715,16 +718,20 @@ class AnalysisSchemaBlackboxTests(unittest.TestCase):
 
         kc = load_known_concepts(config_path)
         self.assertEqual(kc.schema_version, 1)
-        self.assertEqual(kc.provenance, "initial_synthetic_draft")
-        self.assertEqual(len(kc.concepts), 12)
+        self.assertEqual(kc.provenance, "user_confirmed")
+        self.assertEqual(kc.concepts, ["환각", "프롬프트 엔지니어링", "컨텍스트 윈도우", "RAG", "임베딩"])
+        self.assertEqual(set(kc.aliases), set(kc.concepts))
 
         with open(gold_path, "r", encoding="utf-8") as f:
             gold_data = json.load(f)
         gold_concepts = gold_data["known_concepts"]
         self.assertEqual(len(gold_concepts), 12)
-
-        # Exact set equality
-        self.assertEqual(set(kc.concepts), set(gold_concepts))
+        synth = KnownConcepts.model_validate({
+            "schema_version": 1,
+            "provenance": "initial_synthetic_draft",
+            "concepts": gold_concepts,
+        })
+        self.assertEqual(set(synth.concepts), set(gold_concepts))
 
     def test_19_large_payload_unicode_and_casefold_edge_cases(self):
         """Large payload, Korean text, emojis, and German sharp S (ß / SS) casefold roundtrip."""

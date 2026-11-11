@@ -512,21 +512,31 @@ class LoadKnownConceptsTests(unittest.TestCase):
 
 
 class ConfigDraftTests(unittest.TestCase):
-    def test_config_loads_and_matches_gold(self):
+    """T-006: 실제 config는 사용자 확정 5개(+aliases). 합성 12개는 gold fixture에서 별도 검증."""
+
+    USER_CONCEPTS = ["환각", "프롬프트 엔지니어링", "컨텍스트 윈도우", "RAG", "임베딩"]
+
+    def test_config_is_user_confirmed_five(self):
         known = load_known_concepts(CONFIG)
+        self.assertEqual(known.provenance, "user_confirmed")
+        self.assertEqual(known.concepts, self.USER_CONCEPTS)
+        self.assertEqual(set(known.aliases), set(self.USER_CONCEPTS))
+
+    def test_synthetic_gold_twelve_still_valid_model(self):
         gold = json.loads(GOLD.read_text(encoding="utf-8"))
-        self.assertEqual(known.provenance, "initial_synthetic_draft")
+        known = KnownConcepts.model_validate(
+            {"schema_version": 1, "provenance": "initial_synthetic_draft", "concepts": gold["known_concepts"]}
+        )
         self.assertEqual(len(known.concepts), 12)
-        self.assertEqual(set(known.concepts), set(gold["known_concepts"]))
-        self.assertEqual(len(known.concepts), len(set(known.concepts)))
+        self.assertEqual(known.aliases, {})
 
     def test_config_known_term_rejected_as_new(self):
         known = load_known_concepts(CONFIG)
         d = gallery_ready()
         d.update(
-            source_text="LoRA 어텐션",
-            evidence_terms=["LoRA", "어텐션"],
-            new_concepts_detected=["LoRA"],
+            source_text="RAG 어텐션",
+            evidence_terms=["RAG", "어텐션"],
+            new_concepts_detected=["RAG"],
         )
         with self.assertRaises(ValueError):
             V.ok(self, d).validate_known_concepts(known)
