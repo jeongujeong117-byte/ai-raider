@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "provenance": "initial_synthetic_draft",
+  "concepts": [
+    "transformer",
+    "lora",
+    "agent",
+    "ocr",
+    "asr",
+    "diffusion",
+    "fine-tuning",
+    "rag",
+    "vector_db",
+    "npu",
+    "vit",
+    "checkpoint"
+  ]
+}
