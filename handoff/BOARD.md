@@ -1,11 +1,11 @@
-﻿# 작업 현황
+# 작업 현황
 
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
-| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | PASS·develop 병합 완료, S3 배정 준비 | develop (개발 c4783ac, QA ccec489) | 0 |
-| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium | 명세 확정·배정 준비 | 미정 | 0 |
-| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium | 명세 확정·배정 준비 | 미정 | 0 |
-| T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 명세 확정·배정 준비 | 미정 | 0 |
+| T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity | PASS·develop 병합 완료, S3 설명 작성 중 | develop (개발 c4783ac, QA ccec489) | 0 |
+| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium | 개발 중 | jeongujeong117-byte/t-001-dev | 0 |
+| T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium | 개발 중 | jeongujeong117-byte/t-002-dev | 0 |
+| T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 작성·검증 중 | jeongujeong117-byte/t-003-qa | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
 | 별도 | Instagram·X 실계정 1개 수집 검증 | 사용자 직접 | 사용자 수행 영역 | 해당 없음 | 0 |
 
@@ -55,3 +55,13 @@
 - 실제 SNS 수집 및 실엔진 OCR/GPU는 미검증. master 병합/push 없음.
 - 다음 명세: T-001/T-002/T-003 병렬, T-000-learn(S3).
 
+## 병렬 배정 기록
+
+| 작업 | Task | Dispatch | 모델 / effort | 워크트리 |
+|---|---|---|---|---|
+| T-001 | task_223b4dfa826d | ctx_01f428a01dc8 | claude-sonnet-5-5 / medium | t-001-dev |
+| T-002 | task_d8afd68ee98a | ctx_6e5b64cccdf3 | claude-sonnet-5-5 / medium | t-002-dev |
+| T-003 | task_5c9f157dcdf6 | ctx_58f43d40615d | Antigravity 자체 설정 | t-003-qa |
+| T-000 S3 | task_52e790216fee | ctx_27a2331b1591 | claude-sonnet-5-5 / low | t-000-learn |
+
+모두 develop/a7746db 기반 자식 워크트리에서 ready 확인. 4개 동시 워커, S1 2개는 허용 파일 비중복. 이전 T-000 S1은 already_released, S2는 released 확인. S3 브랜치는 jeongujeong117-byte/t-000-learn. 결과는 Orca 메시지로 수신한다.
