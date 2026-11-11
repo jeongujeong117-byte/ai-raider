@@ -524,47 +524,96 @@ class BlackboxServerMcpProtocolTests(unittest.TestCase):
                 self.assertNotIn(self.tmp.name, text, "Error response must not leak temp DB path")
                 self.assertNotIn("Traceback", text, "Error response must not leak stack traces")
 
-    def test_04_sdk_coercion_contrast_analysis(self):
-        """Contrast direct API validation vs MCP SDK argument coercion behavior.
+    def test_04_strict_mcp_type_validation_and_coercion_rejection(self):
+        """MCP server must reject bools and string numbers for integer fields (isError=True).
 
-        Direct API rejects bools and string numbers for int fields (limit=True, limit='10').
-        FastMCP / Pydantic v2 in default lax mode coerces JSON bool `true` to `1` and string `"10"` to `10`.
-        This test documents and asserts this architectural boundary behavior.
+        Contract per T-002:
+        - limit must strictly be an integer in 1..500 (reject bool, str, float, etc.)
+        - offset must strictly be an integer >= 0 (reject bool, str, float, etc.)
+        - SDK lax coercion must NOT bypass integer contracts (limit=True, limit='2', offset=False, offset='0' must fail).
+        - Valid integers (limit=1, limit=500, offset=0) must succeed (isError=False).
+        - String identifiers must not coerce non-strings (platform=123, post_id=True must fail).
         """
         reader = PostReader(self.db_path)
 
         # 1. Direct API boundary assertions: strictly raises ValueError
-        with self.assertRaises(ValueError):
-            reader.list_posts(limit=True)
-        with self.assertRaises(ValueError):
-            reader.list_posts(limit="10")
-        with self.assertRaises(ValueError):
-            reader.list_posts(offset=False)
-        with self.assertRaises(ValueError):
-            reader.list_posts(offset="0")
+        for bad_limit in (True, False, "10", 0, 501, -1):
+            with self.assertRaises(ValueError):
+                reader.list_posts(limit=bad_limit)
+            with self.assertRaises(ValueError):
+                reader.list_unanalyzed(limit=bad_limit)
 
-        # 2. MCP stdio boundary assertions: FastMCP/Pydantic lax coercion
+        for bad_offset in (True, False, "0", -1):
+            with self.assertRaises(ValueError):
+                reader.list_posts(offset=bad_offset)
+            with self.assertRaises(ValueError):
+                reader.list_unanalyzed(offset=bad_offset)
+
+        # 2. MCP stdio boundary assertions: MUST return isError=True for invalid types
         async def action(session):
-            # JSON bool `true` coerced to int 1 by Pydantic before reaching reader
-            coerced_bool = await session.call_tool("list_posts", {"limit": True})
-            # JSON string `"2"` coerced to int 2 by Pydantic
-            coerced_str = await session.call_tool("list_posts", {"limit": "2"})
-            # JSON string `"bad"` cannot be coerced to int -> Pydantic validation error
-            invalid_str = await session.call_tool("list_posts", {"limit": "bad"})
-            return coerced_bool, coerced_str, invalid_str
+            results = {}
 
-        coerced_bool, coerced_str, invalid_str = self._execute_mcp_session(action)
+            # Attacks on list_posts int fields
+            results["lp_limit_bool"] = await session.call_tool("list_posts", {"limit": True})
+            results["lp_limit_str"] = await session.call_tool("list_posts", {"limit": "2"})
+            results["lp_offset_bool"] = await session.call_tool("list_posts", {"offset": False})
+            results["lp_offset_str"] = await session.call_tool("list_posts", {"offset": "0"})
+            results["lp_limit_zero"] = await session.call_tool("list_posts", {"limit": 0})
+            results["lp_limit_overflow"] = await session.call_tool("list_posts", {"limit": 501})
 
-        # Confirm SDK coercion: bool True becomes limit=1 (returns 1 item)
-        self.assertFalse(coerced_bool.isError)
-        self.assertEqual(len(coerced_bool.structuredContent["items"]), 1)
+            # Attacks on list_unanalyzed int fields
+            results["lu_limit_bool"] = await session.call_tool("list_unanalyzed", {"limit": True})
+            results["lu_limit_str"] = await session.call_tool("list_unanalyzed", {"limit": "2"})
+            results["lu_offset_bool"] = await session.call_tool("list_unanalyzed", {"offset": False})
+            results["lu_offset_str"] = await session.call_tool("list_unanalyzed", {"offset": "0"})
+            results["lu_limit_zero"] = await session.call_tool("list_unanalyzed", {"limit": 0})
+            results["lu_limit_overflow"] = await session.call_tool("list_unanalyzed", {"limit": 501})
 
-        # Confirm SDK coercion: string "2" becomes limit=2 (returns 2 items)
-        self.assertFalse(coerced_str.isError)
-        self.assertEqual(len(coerced_str.structuredContent["items"]), 2)
+            # Valid integer boundaries: must succeed
+            results["lp_valid_min"] = await session.call_tool("list_posts", {"limit": 1, "offset": 0})
+            results["lp_valid_max"] = await session.call_tool("list_posts", {"limit": 500, "offset": 0})
+            results["lu_valid_min"] = await session.call_tool("list_unanalyzed", {"limit": 1, "offset": 0})
+            results["lu_valid_max"] = await session.call_tool("list_unanalyzed", {"limit": 500, "offset": 0})
 
-        # Confirm SDK validation: string "bad" fails with isError=True
-        self.assertTrue(invalid_str.isError)
+            # String identifier type checking: must reject non-strings
+            results["gp_plat_int"] = await session.call_tool("get_post", {"platform": 123, "post_id": "1"})
+            results["gp_id_bool"] = await session.call_tool("get_post", {"platform": "x", "post_id": True})
+            results["lp_plat_int"] = await session.call_tool("list_posts", {"platform": 123})
+            results["lp_handle_bool"] = await session.call_tool("list_posts", {"handle": True})
+
+            return results
+
+        res = self._execute_mcp_session(action)
+
+        # Valid boundaries must succeed
+        self.assertFalse(res["lp_valid_min"].isError, "list_posts limit=1 must succeed")
+        self.assertFalse(res["lp_valid_max"].isError, "list_posts limit=500 must succeed")
+        self.assertFalse(res["lu_valid_min"].isError, "list_unanalyzed limit=1 must succeed")
+        self.assertFalse(res["lu_valid_max"].isError, "list_unanalyzed limit=500 must succeed")
+
+        # String identifier type safety: non-strings must be rejected
+        self.assertTrue(res["gp_plat_int"].isError, "get_post platform=123 must be rejected")
+        self.assertTrue(res["gp_id_bool"].isError, "get_post post_id=True must be rejected")
+        self.assertTrue(res["lp_plat_int"].isError, "list_posts platform=123 must be rejected")
+        self.assertTrue(res["lp_handle_bool"].isError, "list_posts handle=True must be rejected")
+
+        # Range bounds must be rejected
+        self.assertTrue(res["lp_limit_zero"].isError, "list_posts limit=0 must be rejected")
+        self.assertTrue(res["lp_limit_overflow"].isError, "list_posts limit=501 must be rejected")
+        self.assertTrue(res["lu_limit_zero"].isError, "list_unanalyzed limit=0 must be rejected")
+        self.assertTrue(res["lu_limit_overflow"].isError, "list_unanalyzed limit=501 must be rejected")
+
+        # Coercion rejection assertions per T-002 contract:
+        # SDK lax coercion (converting bool to 1/0 or str to int) MUST NOT be permitted.
+        self.assertTrue(res["lp_limit_bool"].isError, "list_posts limit=True must be rejected as error")
+        self.assertTrue(res["lp_limit_str"].isError, "list_posts limit='2' must be rejected as error")
+        self.assertTrue(res["lp_offset_bool"].isError, "list_posts offset=False must be rejected as error")
+        self.assertTrue(res["lp_offset_str"].isError, "list_posts offset='0' must be rejected as error")
+
+        self.assertTrue(res["lu_limit_bool"].isError, "list_unanalyzed limit=True must be rejected as error")
+        self.assertTrue(res["lu_limit_str"].isError, "list_unanalyzed limit='2' must be rejected as error")
+        self.assertTrue(res["lu_offset_bool"].isError, "list_unanalyzed offset=False must be rejected as error")
+        self.assertTrue(res["lu_offset_str"].isError, "list_unanalyzed offset='0' must be rejected as error")
 
     def test_05_stdio_hygiene_and_clean_shutdown(self):
         """Server emits only valid JSON-RPC on stdout and shuts down cleanly when stdin closes."""
