@@ -7,33 +7,20 @@ import calendar
 import csv
 import io
 import json
-import os
 import re
 import secrets
-import sqlite3
 import threading
-import uuid
-from contextlib import contextmanager
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 from urllib.parse import parse_qs, urlparse, unquote
-from source_manager import Registry
-from media_store import download_media, x_media, MIME_EXT
-from post_processing import Processor, prepare
-from github_agent import GithubAgent
-from source_agents import SourceAgent, KINDS
-
-ROOT = Path(__file__).resolve().parent
-os.environ["TWS_TELEMETRY"] = "0"
-DATA = ROOT / "data"
-PRIVATE = ROOT / ".private"
-UTC = timezone.utc
-KST = timezone(timedelta(hours=9))
-
-
-def now():
-    return datetime.now(UTC)
+from agents import Cancelled, instagram_agent, x_agent
+from agents.github_agent import GithubAgent
+from agents.source_agents import SourceAgent, KINDS
+from core import store as core_store
+from core.common import ROOT, DATA, PRIVATE, UTC, KST, now
+from core.media_store import download_media, x_media, MIME_EXT
+from core.post_processing import Processor, prepare
+from core.source_manager import Registry
 
 
 def months_ago(value, months=3):
@@ -58,171 +45,24 @@ def accounts():
     return Registry(ROOT).accounts()
 
 
-class Store:
+class Store(core_store.Store):
+    """core.store.Store whose default DB path and category accounts follow raider.DATA/ROOT/Registry."""
     def __init__(self, path=None):
-        self.path = Path(path or DATA / "raider.sqlite")
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.connect() as db:
-            db.executescript('''
-            CREATE TABLE IF NOT EXISTS posts (
-              platform TEXT, post_id TEXT, handle TEXT, url TEXT, posted_at TEXT,
-              text TEXT, metrics TEXT, media TEXT, collected_at TEXT, raw TEXT,
-              PRIMARY KEY(platform, post_id));
-            CREATE TABLE IF NOT EXISTS runs (
-              id TEXT PRIMARY KEY, start TEXT, end TEXT, state TEXT, created_at TEXT);
-            CREATE TABLE IF NOT EXISTS tasks (
-              run_id TEXT, platform TEXT, handle TEXT, slice_start TEXT, slice_end TEXT,
-              state TEXT, seen INTEGER DEFAULT 0, message TEXT DEFAULT '',
-              PRIMARY KEY(run_id, platform, handle, slice_start));
-            CREATE INDEX IF NOT EXISTS posts_date ON posts(posted_at);
-            CREATE TABLE IF NOT EXISTS processing (
-              platform TEXT, post_id TEXT, fingerprint TEXT, state TEXT,
-              result TEXT DEFAULT '{}', updated_at REAL,
-              PRIMARY KEY(platform,post_id));
-            ''')
-            if 'download_media' not in {r['name'] for r in db.execute('PRAGMA table_info(runs)')}:
-                db.execute('ALTER TABLE runs ADD COLUMN download_media INTEGER NOT NULL DEFAULT 0')
+        super().__init__(path or DATA / "raider.sqlite")
 
-    @contextmanager
-    def connect(self):
-        db = sqlite3.connect(self.path, timeout=30)
-        db.row_factory = sqlite3.Row
-        try:
-            with db:
-                yield db
-        finally:
-            db.close()
-
-    def save(self, post):
-        with self.connect() as db:
-            db.execute('''INSERT INTO posts VALUES (?,?,?,?,?,?,?,?,?,?)
-              ON CONFLICT(platform,post_id) DO UPDATE SET text=excluded.text,
-              metrics=excluded.metrics,media=excluded.media,collected_at=excluded.collected_at,raw=excluded.raw''',
-              (post["platform"], str(post["post_id"]), post["handle"], post["url"], post["posted_at"],
-               post["text"], json.dumps(post["metrics"]), json.dumps(post["media"]), now().isoformat(),
-               json.dumps(post.get("raw", {}), ensure_ascii=False, default=str)))
-
-    def create_run(self, selected, begin, finish, download_files=False):
-        run_id = uuid.uuid4().hex
-        with self.connect() as db:
-            db.execute("INSERT INTO runs(id,start,end,state,created_at,download_media) VALUES (?,?,?,?,?,?)", (run_id, begin.isoformat(), finish.isoformat(), "pending", now().isoformat(),int(download_files)))
-            for account in selected:
-                slices = [(begin, finish)]
-                if account["platform"] == "x":
-                    slices = []
-                    cursor = begin
-                    while cursor < finish:
-                        edge = min(cursor.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1), finish)
-                        slices.append((cursor, edge))
-                        cursor = edge
-                db.executemany("INSERT INTO tasks(run_id,platform,handle,slice_start,slice_end,state) VALUES (?,?,?,?,?,?)",
-                    [(run_id, account["platform"], account["handle"], a.isoformat(), b.isoformat(), "pending") for a,b in slices])
-        return run_id
-
-    def tasks(self, run_id):
-        with self.connect() as db:
-            return [dict(r) for r in db.execute("SELECT * FROM tasks WHERE run_id=? ORDER BY platform,handle,slice_start", (run_id,))]
-
-    def task(self, row, state, seen, message=""):
-        with self.connect() as db:
-            db.execute("UPDATE tasks SET state=?,seen=?,message=? WHERE run_id=? AND platform=? AND handle=? AND slice_start=?",
-                       (state,seen,message,row["run_id"],row["platform"],row["handle"],row["slice_start"]))
-
-    def run_state(self, run_id, state):
-        with self.connect() as db:
-            db.execute("UPDATE runs SET state=? WHERE id=?", (state,run_id))
-
-    def rows(self, platform="", handle="", offset=0, limit=100, sort="date", category=""):
-        where, params = [], []
-        for key, value in (("platform",platform),("handle",handle)):
-            if value:
-                where.append(key+"=?")
-                params.append(value)
-        if category:
-            names=[a['handle'] for a in accounts() if a['category']==category and (not platform or a['platform']==platform)]
-            if not platform:
-                raise ValueError('분류 조회에는 플랫폼을 선택하세요.')
-            if not names:
-                return {'total':0,'items':[]}
-            where.append('handle IN ('+','.join('?' for _ in names)+')')
-            params.extend(names)
-        clause = " WHERE " + " AND ".join(where) if where else ""
-        order = "posted_at DESC,post_id DESC"
-        # Reactions across platforms are deliberately not combined into one score.
-        if sort == "likes" and platform:
-            order = "CAST(json_extract(metrics,'$.likes') AS INTEGER) DESC, posted_at DESC"
-        with self.connect() as db:
-            total = db.execute("SELECT COUNT(*) FROM posts"+clause, params).fetchone()[0]
-            result = [dict(r) for r in db.execute("SELECT * FROM posts"+clause+" ORDER BY "+order+" LIMIT ? OFFSET ?", params+[limit,offset])]
-        for row in result:
-            for key in ("metrics","media","raw"):
-                row[key] = json.loads(row[key])
-        # Derived data live separately so a new crawl cannot erase OCR/transcripts.
-        with self.connect() as db:
-            for row in result:
-                processed=db.execute('SELECT state,result FROM processing WHERE platform=? AND post_id=?',
-                                     (row['platform'],row['post_id'])).fetchone()
-                row['processing']={**json.loads(processed['result']),'state':processed['state']} if processed else {'state':'not_queued'}
-        return {"total":total,"items":result}
-
-
-class Cancelled(Exception):
-    pass
+    def _accounts(self):
+        return accounts()
 
 
 def instagram(task, begin, finish, stop):
-    import instaloader
-    settings = PRIVATE / "instagram.json"
-    if not settings.exists():
-        raise RuntimeError("Instagram 로그인이 필요합니다. 터미널에서 uv run python raider.py login-instagram 실행")
-    username = json.loads(settings.read_text(encoding="utf-8"))["username"]
-    loader = instaloader.Instaloader(max_connection_attempts=1, request_timeout=30,
-                                    download_pictures=False, download_videos=False)
-    loader.load_session_from_file(username, str(PRIVATE / "instagram.session"))
-    profile = instaloader.Profile.from_username(loader.context, task["handle"])
-    # Full enumeration avoids stopping on an out-of-order pinned post.
-    for post in profile.get_posts():
-        if stop.is_set():
-            raise Cancelled()
-        date = post.date_utc.replace(tzinfo=UTC)
-        if not begin <= date < finish:
-            continue
-        media = [{"url":post.url,"kind":"thumbnail" if post.is_video else "image"}]
-        if post.typename == "GraphSidecar":
-            media=[]
-            for n in post.get_sidecar_nodes():
-                if n.is_video:
-                    media.append({'url':n.video_url,'kind':'video'})
-                media.append({'url':n.display_url,'kind':'thumbnail' if n.is_video else 'image'})
-        elif post.is_video:
-            media.insert(0,{'url':post.video_url,'kind':'video'})
-        yield {"platform":"instagram","post_id":str(post.mediaid),"handle":task["handle"],
-               "url":f"https://www.instagram.com/p/{post.shortcode}/", "posted_at":date.isoformat(),
-               "text":post.caption or "", "metrics":{"likes":post.likes,"comments":post.comments,
-               "views":getattr(post,"video_view_count",None) if post.is_video else None},"media":media,
-               "raw":{"shortcode":post.shortcode,"type":post.typename}}
+    """Delegate to agents.instagram_agent, reading raider.PRIVATE when iteration starts."""
+    yield from instagram_agent.instagram(task, begin, finish, stop, private=PRIVATE)
 
 
 async def x_posts(task, begin, finish, stop):
-    from twscrape import API
-    path = PRIVATE / "x-accounts.db"
-    if not path.exists():
-        raise RuntimeError("X 세션이 필요합니다. README의 X 로그인 설정을 먼저 완료하세요.")
-    api = API(str(path), raise_when_no_account=True)
-    day = begin.date().isoformat()
-    next_day = (begin + timedelta(days=1)).date().isoformat()
-    query = f"from:{task['handle']} since:{day} until:{next_day}"
-    async for tweet in api.search(query, limit=0, kv={"product":"Latest"}):
-        if stop.is_set():
-            raise Cancelled()
-        date = tweet.date.astimezone(UTC)
-        if not begin <= date < finish or tweet.user.username.lower() != task["handle"].lower():
-            continue
-        yield {"platform":"x","post_id":str(tweet.id),"handle":task["handle"],
-               "url":tweet.url,"posted_at":date.isoformat(),"text":tweet.rawContent,
-               "metrics":{"likes":tweet.likeCount,"comments":tweet.replyCount,"reposts":tweet.retweetCount,
-                          "quotes":tweet.quoteCount,"views":tweet.viewCount},
-               "media":x_media(tweet.media),"raw":json.loads(tweet.json())}
+    """Delegate to agents.x_agent, reading raider.PRIVATE when iteration starts."""
+    async for post in x_agent.x_posts(task, begin, finish, stop, private=PRIVATE):
+        yield post
 
 
 class Runner:
@@ -554,7 +394,7 @@ def main():
     elif args.command=='prepare-processing':
         prepare(DATA)
     elif args.command=='source-browser-login':
-        from source_tools import public_url
+        from core.source_tools import public_url
         public_url(args.url)
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
