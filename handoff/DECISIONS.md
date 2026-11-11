@@ -99,4 +99,3 @@ S4는 Claude Sonnet 5.5/low 읽기 전용 감사자이며 handoff/SUPERVISOR-LOG
 ## D-017 · 2026-11-12 · T-004 수락
 
 651cb84/a5d63c2를 검토하고 QA 브랜치 전체199개 및 df7c360 통합 후 전체199개를 extras 포함 재실행, 모두 OK/skip0/exit0. 합성 사전 기반만 수락하며 사용자5개 반영은 T-006에서 config/provenance/alias/테스트를 함께 갱신한다. T-005 0b7b045는 허용3개・clean으로 독립 QA에 넘기며 164개 수치는 T-004 미통합 브랜치 보고다. S4 수락 후 감사 및 S3 설명도 배정한다.
-

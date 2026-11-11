@@ -8,9 +8,9 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 0b7b045 완료・독립 QA 배정 준비 | jeongujeong117-byte/t-005-dev | 0 |
-| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | spec 작성・배정 준비 | 예정 t-006-dev | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 1차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 0b7b045 완료・S2 QA 진행 | jeongujeong117-byte/t-005-dev | 0 |
+| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | S1 ready・개발 중 | jeongujeong117-byte/t-006-dev | 0 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 1차 수락・T-004 수락 후 재감사 진행 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -123,3 +123,5 @@
 - T-004 QA a5d63c2 허용2개 파일만 변경・clean. 기본199개 OK(skip11), extras199개 OK(skip0)는 QA 보고. S0가 QA 브랜치 extras199개 재실행 exit0, df7c360 병합 후 동일199개/skip0/exit0 확인(12.408초).
 - T-004/T-005 완료 워커 released 확인. T-005 0b7b045 허용3개 변경・clean, S1 164개(skip11) 보고는 T-004 미포함 브랜치 수치.
 - T-006의 config/초기config검사 변경은 사용자 승인 계약 갱신이다. 신개념 뜻풀이 생성은 후속 T-011/T-012에 유지.
+- T-005 QA task_0e2cfe1de9ce/ctx_ae2e726c53aa Antigravity ready; T-006 task_714f8a289523/ctx_a9b2e5230be3 Sonnet medium ready.
+- S4 수락 후 감사 task_d4dac40903cb/ctx_ea53cdf69f50 reopened ready(기존 Sonnet low); T-004 학습 task_e3575183518b/ctx_824fa565aabf Sonnet low ready. 실행 작업4개 이내.
