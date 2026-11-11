@@ -39,6 +39,10 @@ DB는 항상 복사본을 읽기 전용으로 열었다. 원본(`C:\Users\jeong\
 | `data/reference-samples/drive-metadata/summary.json` | 출처별 건수·기간 | `28cfbd1b642f9ff4` |
 | `data/reference-samples/drive-metadata/collection-status.json` | `closed_partial` 상태, 수집 오류 | `87794ebb078e61c1` |
 
+### 3-1. 샘플 선택 기록 (Git에 포함)
+
+위 샘플은 본문이 Git 밖에 있으므로, **무엇을 골랐는지**를 `handoff/samples/`에 따로 기록했다(ID·선택 기준·원본 DB 정보, 본문 없음). 이 샘플은 평가용 정답이 아니다. 같은 샘플을 다시 만드는 절차는 `handoff/samples/README.md`를 따른다.
+
 ## 4. 보존하지 않은 것
 
 | 파일 | 이유 |
