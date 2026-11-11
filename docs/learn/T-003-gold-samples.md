@@ -1,7 +1,7 @@
 # T-003 · 합성 gold dataset 과 블랙박스 검증 틀 학습 문서
 
 > 근거: `handoff/specs/T-003.md`, `handoff/reviews/T-003-qa.md`, `handoff/DECISIONS.md`(D-008), `tests/blackbox/README.md`, `tests/blackbox/fixtures/gold_samples.json`, `tests/blackbox/test_gold_samples.py`.
-> 수치 기준: 수락 최종 커밋 `ff69a03`. **15개 합성 사례, 신규 12개 테스트**는 그 시점 기준이다. QA 리뷰의 69개/blackbox 19개는 보완 전 시점 수치이고, S0 병합 후 develop 전체 98개·blackbox 30개 exit 0 이다. 이후 수정되면 숫자는 달라질 수 있다. 이 문서 작성 중 테스트는 재실행하지 않았다.
+> 수치 기준: 수락 최종 커밋 `ff69a03`. **15개 합성 사례, 신규 12개 테스트**는 그 시점 기준이다. `handoff/reviews/T-003-qa.md`의 전체 69개·blackbox 19개는 T-003 단독 브랜치에서 보완(15개 샘플·12개 신규 테스트 포함) 수락 시점의 수치다(BOARD도 `ff69a03` 수락 시 69/19 재실행으로 기록). 이는 T-001이 함께 합쳐진 develop 통합 수치(전체 98개·blackbox 30개 exit 0, DECISIONS D-008)와 다르다. 이후 수정되면 숫자는 달라질 수 있다. 이 문서 작성 중 테스트는 재실행하지 않았다.
 
 ## 1. 어떤 문제를 푸는가
 수집·저장·분석 시스템은 "대충 잘 되는 것 같다"로는 검증이 안 된다. 특히 *값이 없음(None)* 과 *0*, 시간대 경계, 중복 저장처럼 실수하기 쉬운 지점에 **정답이 정해진 작은 예제 모음(gold dataset)** 이 있어야 이후 변경이 회귀를 만들었는지 알 수 있다. T-003은 실제 계정·실제 게시물 없이, 직접 만든 **합성 데이터** 15개와 이를 확인하는 테스트 틀을 만든다.
