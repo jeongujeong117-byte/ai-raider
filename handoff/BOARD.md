@@ -10,7 +10,7 @@
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | QA PASS 미수락・손상 Task ID TypeError 1차 반려 | jeongujeong117-byte/t-005-dev | 1 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 2차 수락・T-006 수락 후 3차 감사 진행 | jeongujeong117-byte/s4-audit | 해당 없음 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -133,3 +133,4 @@
 - T-005 QA7e1e5be는 미수락. S0 read-only probe로 tasks=[{id:[],title:T-005}] 주입 시 check_orca에서 UNHANDLED TypeError 재현. 기대: 파싱실패 안전출력/exit2. 타입오염 필드/최상위 JSON을 검증하도록 S1 1차반려・S2 FAIL정정 요청.
 - T-005 QA FAIL정정 task_ccb6cab3e1ce/ctx_859106d12f87 ready; S1수정 task_39014f228445/ctx_8201f28c7b3a ready(Sonnet medium 유지).
 - T-006 후 S4감사 task_08392a858784/ctx_b96446366377 ready, S3문서갱신 task_095896887719/ctx_382d54a8897c ready. 총4개작업 한도내.
+- S4 3차51c7e30 수락・develop 병합. 사용자config5개/alias와 합성gold12개 불변을 코드/파일로 확인, T-006 통합 및231개 수치 정합. T-005 수정중/구브랜치 수치는 통합미완료 정상이며 최종 회귀별도필요. 과거T-002 생존과원격push는확인못함 유지. S4 dispatch released확인.
