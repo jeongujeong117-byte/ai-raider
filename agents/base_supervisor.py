@@ -43,6 +43,12 @@ class SupervisorStopped(Exception):
     pass
 
 
+_REASONS = frozenset({
+    "init", "ok", "rate_limited", "session_expired", "blocked", "fallback_used",
+    "fallback_error", "fallback_rate_limited", "fallback_session_expired",
+    "operation_error",
+})
+
 _KEYS = ("source", "state", "updated_at", "retry_at", "reason")
 
 
@@ -78,7 +84,7 @@ class Supervisor:
                 raise ValueError
             if data["retry_at"] is not None and not _is_num(data["retry_at"]):
                 raise ValueError
-            if not isinstance(data["reason"], str):
+            if data["reason"] not in _REASONS:
                 raise ValueError
         except (ValueError, TypeError, OSError):
             raise ValueError("invalid supervisor state file") from None
@@ -155,6 +161,8 @@ class Supervisor:
                 raise
             except Blocked:
                 self._record(HealthState.BLOCKED_FALLBACK, "blocked")
+                if stop.is_set():
+                    raise SupervisorStopped() from None
                 return self._run_fallback(fallback)
             except Exception:
                 self._record(self._state, "operation_error", self._retry_at)

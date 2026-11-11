@@ -225,6 +225,30 @@ class SupervisorTests(unittest.TestCase):
                     Supervisor("a", p)
                 self.assertEqual(p.read_text("utf-8"), bad)
 
+    def test_stop_set_by_operation_skips_fallback(self):
+        s = Supervisor("x", clock=clock_at())
+        ev = threading.Event()
+        fb = seq("fb")
+
+        def op():
+            ev.set()
+            raise Blocked()
+
+        with self.assertRaises(SupervisorStopped):
+            s.run(op, stop=ev, fallback=fb)
+        self.assertEqual(fb.calls, [])
+
+    def test_unknown_reason_rejected_not_overwritten(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d, "s.json")
+            bad = json.dumps({"source": "a", "state": "HEALTHY", "updated_at": 1,
+                              "retry_at": None, "reason": "token=SECRET"})
+            p.write_text(bad, encoding="utf-8")
+            with self.assertRaises(ValueError) as cm:
+                Supervisor("a", p)
+            self.assertNotIn("SECRET", str(cm.exception))
+            self.assertEqual(p.read_text("utf-8"), bad)
+
     def test_save_failure_not_hidden_and_tmp_cleaned(self):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d, "s.json")
