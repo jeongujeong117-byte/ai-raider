@@ -245,8 +245,8 @@ class BlackboxSupervisorTests(unittest.TestCase):
         with self.assertRaises(SupervisorStopped):
             sup.run(make_call_sequence(SupervisorStopped()))
 
-        # Contrast attack: operation raises Blocked while signaling stop
-        # Verifies actual behavior when stop is set during operation that raises Blocked
+        # Stop during operation raising Blocked must abort immediately:
+        # Must raise SupervisorStopped and MUST NOT execute fallback (fallback calls == 0)
         stop_contrast = MockStopEvent()
         fallback_invocations: list[int] = []
 
@@ -258,12 +258,10 @@ class BlackboxSupervisorTests(unittest.TestCase):
             fallback_invocations.append(1)
             return "fallback_result"
 
-        result = sup.run(op_blocked_with_stop, stop=stop_contrast, fallback=fallback_target)
-        self.assertEqual(result, "fallback_result")
-        self.assertEqual(fallback_invocations, [1])
+        with self.assertRaises(SupervisorStopped):
+            sup.run(op_blocked_with_stop, stop=stop_contrast, fallback=fallback_target)
+        self.assertEqual(fallback_invocations, [])
         self.assertTrue(stop_contrast.is_set())
-        self.assertEqual(sup.snapshot()["state"], "BLOCKED_FALLBACK")
-        self.assertEqual(sup.snapshot()["reason"], "fallback_used")
 
     # ------------------------------------------------------------------
     # 7. SessionExpired immediate halt
@@ -480,24 +478,22 @@ class BlackboxSupervisorTests(unittest.TestCase):
             # Restore original valid file
             file_a.write_text(valid_payload, encoding="utf-8")
 
-            # Contract verification: arbitrary secret inserted into reason
-            # Verifies behavior of restore path when reason contains arbitrary string
-            synthetic_reason_secret = "SYNTHETIC_REASON_TOKEN_999"
+            # Contract verification: arbitrary unapproved reason in state file must be rejected
+            # Restoring a state file with an arbitrary reason code must raise ValueError and not overwrite file
+            synthetic_unapproved_reason = "SYNTHETIC_UNAPPROVED_REASON"
             secret_reason_payload = json.dumps({
                 "source": "source_a",
                 "state": "HEALTHY",
                 "updated_at": 100.0,
                 "retry_at": None,
-                "reason": synthetic_reason_secret,
+                "reason": synthetic_unapproved_reason,
             })
             file_a.write_text(secret_reason_payload, encoding="utf-8")
-            loaded_sup = Supervisor("source_a", file_a, clock=constant_clock(300.0))
-            # On load, string reason is accepted as string
-            self.assertEqual(loaded_sup.snapshot()["reason"], synthetic_reason_secret)
-            # Subsequent operation execution immediately sanitizes/scrubs reason with fixed code
-            loaded_sup.run(lambda: "scrub_ok")
-            self.assertEqual(loaded_sup.snapshot()["reason"], "ok")
-            self.assertNotIn(synthetic_reason_secret, file_a.read_text(encoding="utf-8"))
+            with self.assertRaises(ValueError) as cm:
+                Supervisor("source_a", file_a, clock=constant_clock(300.0))
+            self.assertNotIn(synthetic_unapproved_reason, str(cm.exception))
+            # Disk file must remain untouched
+            self.assertEqual(file_a.read_text(encoding="utf-8"), secret_reason_payload)
 
     # ------------------------------------------------------------------
     # 11. Atomic replace failure clean up
