@@ -110,6 +110,7 @@ class PostReader:
 def create_server(db_path):
     from mcp.server.fastmcp import FastMCP
     from mcp.types import ToolAnnotations
+    from pydantic import StrictInt, StrictStr
 
     reader = PostReader(db_path)
     server = FastMCP("ai-raider-posts")
@@ -124,15 +125,15 @@ def create_server(db_path):
             raise ReaderError("internal error") from None
 
     @server.tool(name="list_posts", description="List collected posts (newest first) with optional platform/handle filter and paging.", annotations=hint)
-    def list_posts(platform: str = "", handle: str = "", offset: int = 0, limit: int = 100) -> dict[str, Any]:
+    def list_posts(platform: StrictStr = "", handle: StrictStr = "", offset: StrictInt = 0, limit: StrictInt = 100) -> dict[str, Any]:
         return safe(reader.list_posts, platform, handle, offset, limit)
 
     @server.tool(name="get_post", description="Get one post by platform and post_id; returns null if absent.", annotations=hint)
-    def get_post(platform: str, post_id: str) -> dict[str, Any] | None:
+    def get_post(platform: StrictStr, post_id: StrictStr) -> dict[str, Any] | None:
         return safe(reader.get_post, platform, post_id)
 
     @server.tool(name="list_unanalyzed", description="List posts without an AI analysis record.", annotations=hint)
-    def list_unanalyzed(platform: str = "", handle: str = "", offset: int = 0, limit: int = 100) -> dict[str, Any]:
+    def list_unanalyzed(platform: StrictStr = "", handle: StrictStr = "", offset: StrictInt = 0, limit: StrictInt = 100) -> dict[str, Any]:
         return safe(reader.list_unanalyzed, platform, handle, offset, limit)
 
     return server
