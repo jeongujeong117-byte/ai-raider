@@ -10,7 +10,7 @@
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | 최종 PASS・develop 병합 완료 | develop (개발 3a38765, QA b4400b7, 병합 c3984b9) | 2 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
-| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 수락・T-005 최종 수락 후4차감사 진행 | jeongujeong117-byte/s4-audit | 해당 없음 |
+| S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 4차 감사 정정본 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
 ## 운영
@@ -147,3 +147,4 @@
 - S0실제통합CLI cp949:strict/ascii:strict/utf8:strict 모두rc1/JSON파싱성공/stderr0/필수소스오류0. rc1은경고findings정상산출물,실패아님. QA최종dispatch released확인.
 - S4수락후감사 task_66b3804c8c9a/ctx_4aa5eeecd9c0 Sonnetlow ready. T005학습 task_b6a3910ffd97/ctx_f9cb089ad589 Sonnetlow ready. 최종수락후후속2개진행중.
 - S4 4차656561a도착: 새위반없음/통합294개와코드/승격이력정합. 권고의3회반려표현은실제2회반려후3차통과와달라수락전문구정정요청. 학습결과대기.
+- S4정정b6bc928 수락・develop병합,반려2회/3차통과표현정정확인,S4released. T005학습cb2ce99는docs1개/clean확인, S4조치권한/ok해석/추가의존성표현정정요청후수락예정.
