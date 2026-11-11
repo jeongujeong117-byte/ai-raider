@@ -117,3 +117,7 @@ T-005 QA후속시작관측지연: Orca turn_start_unobserved 알림에도 ctx_13
 ## D-020 · 2026-11-12 · T-005 통합 회귀 실패・2차 반려
 
 QA76ab0b5/S0 QA브랜치184개통과후67c8961통합했으나 전체284개중test16 JSONDecodeError/test18 rc불일치. uvPython3.14 subprocess stdout cp949가BOARD '・'출력에서UnicodeEncodeError로깨지는것을S0재현. 따라서통합됐어도최종수락/완료아님. 2회반려로3차Opus5.5/high 같은워크트리승격. 이번실패시사람검토필요중단. S0제품직접수정없음, 원격배포/master변경없음.
+
+## D-021 · 2026-11-12 · T-005 최종 수락
+
+Opus3a38765/QA b4400b7로2개결함(TypeError/Windows cp949출력)을수정・독립검증했다. S0 QA브랜치extras194개/skip0/exit0재실행, c3984b9통합후extras전체294개/skip0/exit0확인. 실제통합CLI cp949/ascii/UTF8 strict3종에서JSON유효/stderr0/필수소스오류0, 경고findings로rc1은예상산출물. 2회반려이력과67c8961통합실패를보존하고이번3차PASS로최종수락한다. 출력4MiB는실행후검사,원격push/응답없음/테스트감소/승인판정은unknown인한계유지. S4수락후감사/S3학습문서배정.

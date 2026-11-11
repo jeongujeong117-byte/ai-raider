@@ -8,7 +8,7 @@
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 보완 수락·develop 병합 완료 | develop (ff69a03) | 0 |
 | T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
-| T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | Opus 3차 수정3a38765 도착・최종 QA 재검증 | develop에 67c8961 통합됐으나 검증 실패, 수정 t-005-dev | 2 |
+| T-005 | 읽기 전용 진행감독 CLI | S1 Opus high(3차) → S2 Antigravity | 최종 PASS・develop 병합 완료 | develop (개발 3a38765, QA b4400b7, 병합 c3984b9) | 2 |
 | T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | PASS・develop 병합 완료 | develop (개발 283d62e, QA 298ece3, 병합 38f911b) | 0 |
 | S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 3차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
@@ -143,3 +143,5 @@
 - QA2차정정은ctx_1382f85450d1에send요청. 최종수락보류이며Opus3차도FAIL이면사람검토필요중단.
 - T-005 QA2차FAIL d2e4a22 허용2파일/clean확인: test19 cp949:strict + ・/emoji/한글fixture에서UnicodeEncodeError/빈stdout RED재현. 첫TypeError test17/edge18보존. Opus ctx_f3470b5bdb1a는live/working이며수정커밋대기,반려2유지.
 - T-005 Opus3a38765 허용3개/clean/출력수정diff확인. S1 174개(extras skip0), JSON ASCII이스케이프/텍스트backslashreplace, 신규8개인코딩/실제CLI회귀보고. QA ctx_b6edf1df89ce에독립재검증send, Opus완료dispatch released. 반려2유지,이번FAIL시사람검토필요중단.
+- T-005 최종QA b4400b7 허용2개/clean, 원본FAIL/인코딩FAIL이력보존. S0 QA브랜치extras194개/skip0/exit0(57.251초) 재실행후c3984b9통합. 통합extras전체294개/skip0/exit0(58.453초) 확인하여최종수락. 이전284개실패는수정전이력으로유지.
+- S0실제통합CLI cp949:strict/ascii:strict/utf8:strict 모두rc1/JSON파싱성공/stderr0/필수소스오류0. rc1은경고findings정상산출물,실패아님. QA최종dispatch released확인.
