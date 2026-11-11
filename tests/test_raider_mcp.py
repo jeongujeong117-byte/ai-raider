@@ -226,6 +226,33 @@ class ServerCase(unittest.TestCase):
         self.assertNotIn("Traceback", text)
         self.assertEqual(fingerprint(self.path), before)
 
+    def test_strict_argument_types_over_stdio(self):
+        bad_cases = [
+            ("list_posts", {"limit": True}), ("list_posts", {"limit": "2"}), ("list_posts", {"limit": 2.0}),
+            ("list_posts", {"limit": 1.5}), ("list_posts", {"limit": None}), ("list_posts", {"offset": False}),
+            ("list_posts", {"offset": "0"}), ("list_posts", {"offset": 0.0}), ("list_posts", {"offset": None}),
+            ("list_posts", {"platform": 1}), ("list_posts", {"handle": True}), ("list_posts", {"platform": None}),
+            ("list_unanalyzed", {"limit": True}), ("list_unanalyzed", {"limit": "2"}), ("list_unanalyzed", {"limit": 2.0}),
+            ("list_unanalyzed", {"limit": None}), ("list_unanalyzed", {"offset": False}), ("list_unanalyzed", {"offset": "0"}),
+            ("list_unanalyzed", {"offset": 0.0}), ("list_unanalyzed", {"offset": None}),
+            ("list_unanalyzed", {"platform": 5}), ("list_unanalyzed", {"handle": ["h"]}),
+            ("get_post", {"platform": 1, "post_id": "1"}), ("get_post", {"platform": "x", "post_id": 1}),
+            ("get_post", {"platform": "x", "post_id": None}), ("get_post", {"platform": "x", "post_id": True}),
+        ]
+        good_cases = [("list_posts", {"handle": "h", "limit": 2, "offset": 0}), ("list_unanalyzed", {"handle": "h", "limit": 500, "offset": 0}),
+                      ("get_post", {"platform": "x", "post_id": "1"})]
+
+        async def scenario(s):
+            bad = [(n, a, (await s.call_tool(n, a)).isError) for n, a in bad_cases]
+            good = [(n, a, (await s.call_tool(n, a)).isError) for n, a in good_cases]
+            return bad, good
+
+        bad, good = self._run(scenario)
+        for n, a, err in bad:
+            self.assertTrue(err, f"{n} {a} should be rejected")
+        for n, a, err in good:
+            self.assertFalse(err, f"{n} {a} should succeed")
+
     def test_stdout_only_protocol(self):
         proc = subprocess.Popen([sys.executable, str(ROOT / "raider_mcp.py"), "--db", self.path], cwd=str(ROOT),
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

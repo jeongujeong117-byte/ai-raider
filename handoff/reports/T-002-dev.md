@@ -44,3 +44,12 @@
 
 ## 범위 밖 필요 사항
 `post_analyses` 스키마/저장 경로(향후 task), MCP 클라이언트 등록 문서.
+
+## 1차 반려 대응 (QA 39ebef9 / S0 stdio 재현)
+- 원인: FastMCP/Pydantic lax 모드가 `limit=true`, `"2"`, `offset=false` 등을 `int`로 강제 변환해 `PostReader` 검증 전에 통과시킴.
+- 수정: `raider_mcp.py` 도구 시그니처를 `pydantic.StrictInt`(limit/offset) / `StrictStr`(platform/handle/post_id)로 변경(import는 `create_server` 내부라 mcp 미설치 import 동작 유지). `PostReader`의 `_int/_str` 검증은 이중 방어로 유지.
+- 회귀 테스트 `test_strict_argument_types_over_stdio`(실제 SDK stdio): list_posts/list_unanalyzed의 limit·offset에 bool/수치 문자열/float/null, 필터에 int/bool/null/list, get_post 식별자에 int/bool/null → 모두 `isError=true`(26건); 정상 int·문자열 3건은 `isError=false`.
+- 수정 전 동일 입력 `limit=true`/`"2"`/`offset=false`가 성공했음은 S0·QA가 재현(QA test_04).
+- `mode=ro` URI 유지(immutable 미사용, WAL/최신 데이터 가시성 유지). S2 테스트 미수정.
+- 재검증: 신규 포함 `tests` 68 tests rc0; 이 워크트리 `tests/blackbox` 7 tests rc0; mcp extra 없이 `import raider_mcp` 성공, 전체 OK (skipped=5, 서버 stdio 테스트); `git diff --check` rc0.
+- 주의: QA 브랜치의 블랙박스 test_04(강제 변환 현상 기록)는 이 수정 후 기대값이 바뀔 수 있으며, 본 브랜치에는 포함되지 않아 그 병합본에서 실행해 보지 못했다.
