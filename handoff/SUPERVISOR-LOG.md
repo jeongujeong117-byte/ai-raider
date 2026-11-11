@@ -44,3 +44,42 @@
 | T-006~T-020 | 미착수 | ROADMAP, 해당 task/브랜치 없음 | 선행 조건 대기 |
 
 전체 완료율은 작업 크기가 달라 계산하지 않는다.
+
+---
+
+# 2차 점검 · T-004 수락 후
+
+- 관측: 2026-11-12, develop=aa08b38, master=origin/master(로컬 ref)=0be384f. Run run_548a284d59da. 판단은 `git show develop:` 최신 문서와 실제 git/Orca 상태 대조. 테스트는 실행하지 않았다(보고의 명령/rc/수치만 대조).
+- 1차 로그는 보존. 1차 이후 S0가 e367f7a로 수락・병합했고 이상 1(BOARD 지연), 2(t-004-qa 미추적 테스트)는 해소됨: 해당 테스트는 a5d63c2로 커밋되어 develop 조상.
+
+## 정상 확인
+- T-004: 651cb84(개발)・a5d63c2(QA)・df7c360(병합)이 모두 develop 조상. QA 변경은 허용 2개 파일(보고서, 블랙박스 테스트)뿐.
+- 테스트 수 정합: QA 보고는 기본 199개 OK(skip 11, MCP stdio 의존)와 extras 199개 OK(skip 0) 분리 기재. 131(이전 develop)+47(S1 단위)+21(QA 블랙박스)=199로 산술 일치, 감소 없음. S0의 QA 브랜치/병합 후 199개 skip0 exit0 재실행은 BOARD 기록이며 이 감사에서 재현하지 않음. S1의 178개는 S0 통합 수치가 아니라는 구분이 BOARD에 유지됨.
+- 반려: T-004 0회, 새로 2회 이상 반려된 작업 없음.
+- 완료 워커: T-004 S1/S2, T-005 S1, S4 1차 모두 succeeded, liveness=exited, released. 열린 채 남은 완료 워커 새로 없음.
+- master 흔적: master=origin/master 로컬 ref 모두 0be384f, 리플로그상 병합 없음. develop은 master 후손(승인 없는 master 병합 흔적 없음, 로컬 기준).
+- 지식 결정: DECISIONS D-015 하단 '사용자 D-013 답변 확정'(환각, 프롬프트 엔지니어링, 컨텍스트 윈도우, RAG, 임베딩 5개 기지식; 파인튜닝/MCP/LoRA/양자화/에이전트 하네스는 모름)이 이전 '빈 사전 가정'을 대체. ROADMAP/STATUS/BOARD가 T-006 반영 예정으로 일치. 현재 develop의 config/known_concepts.json은 T-006 전이므로 5개 반영 여부는 아직 코드로 확인되지 않으며 T-006 완료 전 정상(미반영 상태가 기대치). 파일 내용은 이번에 읽지 않음.
+- 병행 live: T-005 QA(ctx_ae2e726c53aa, Antigravity, retained・live), T-006 dev(ctx_a9b2e5230be3, retained・live), T-004 학습(ctx_824fa565aabf, state=starting・live, 신규), 본 S4. 4개로 동시 한도 이내. retained는 live 작업 중과 구분: 위 셋은 진행 중이라 정상.
+
+## 이상
+1. T-005 0b7b045는 develop에 없음(정상, QA 중). S1의 164개(skip 11)는 T-004 미포함 브랜치 수치로 BOARD에 명시됨. 통합 수치 아님. T-005 QA 브랜치가 T-004 병합 후 develop과 합쳐지기 전에 통과해도 통합 199+@와는 별도 확인 필요.
+2. 학습 T-004 ctx_824fa565aabf가 state=starting인 채 관측됨. 첫 응답 지연 여부는 이 시점에 판단 불가(시작 직후일 수 있음).
+3. 과거 이상 3(ctx_c64264f2869c, T-002 완료 retained/liveness unverifiable) 지속. S0가 생존 불명이라 자동 종료하지 않기로 함.
+4. 워크트리는 19개 등록. T-004 학습, T-005 QA, T-006 dev 등 신규가 포함되어 있고, 새 미커밋 변경은 이 확인 범위에서 관측되지 않았으나 진행 중 워커의 이후 변경은 계속 가능.
+
+## 권고
+- T-005 QA PASS 후 병합 직전 develop 기준 전체 회귀(extras) 재실행 수치를 BOARD에 시점과 함께 분리 기록.
+- T-006 완료 후 known_concepts의 실제 5개와 합성 12개 분리, 미선택 5개가 모르는 개념으로 처리되는지 증거를 요구(이 감사는 파일 내용 미확인).
+- T-004 학습 starting 상태가 길어지면 S0가 liveness 재확인.
+
+## 확인 못 함
+- 원격 push 실제 상태(fetch 안 함), unverifiable dispatch의 프로세스 생존, 모든 테스트 수치의 독립 재현, T-005 QA/T-006/학습 문서의 최종 결과, 실계정/사용자 DB 상태.
+
+## ROADMAP 상태 갱신(발췌)
+| ID | 상태 | 근거 | 부족 증거 |
+|---|---|---|---|
+| T-004 | 완료 | 651cb84/a5d63c2, df7c360 develop 병합, QA 199 보고 | 사용자5개 지식 미반영(T-006) |
+| T-005 | 개발 완료・QA 진행 | 0b7b045, task_0e2cfe1de9ce dispatched | 독립 QA 결과, 병합 전 |
+| T-006 | 개발 진행 | task_714f8a289523 dispatched, t-006-dev=aa08b38 | 커밋 증거 없음 |
+| T-007~T-020 | 미착수 | 해당 task 없음 | 선행 조건 대기 |
+전체 완료율은 계산하지 않는다.
