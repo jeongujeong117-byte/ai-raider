@@ -3,7 +3,7 @@
 | ID | 제목 | 담당 | 상태 | 브랜치 | 반려 횟수 |
 |---|---|---|---|---|---|
 | T-000 | core/agents 구조 분리 및 기존 동작 유지 | S1 Sonnet medium → S2 Antigravity → S3 Sonnet low | PASS·develop 병합 완료, S3 문서 수락 | develop (개발 c4783ac, QA ccec489, 문서 39a088f) | 0 |
-| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-001-dev | 0 |
+| T-001 | 수집기 상태 4종 및 감시 | S1-A Sonnet medium → S2 Antigravity | 1차 반려 수정 140fcdf 도착·QA 재검증 요청 | jeongujeong117-byte/t-001-dev | 1 |
 | T-002 | 조회 전용 MCP 도구 | S1-B Sonnet medium → S2 Antigravity | S2 독립 검증 중 | jeongujeong117-byte/t-002-dev | 0 |
 | T-003 | 정답 샘플 및 블랙박스 검증 틀 | S2 Antigravity | 1차 완료 보고·S0 수락 보완 요청 | jeongujeong117-byte/t-003-qa | 0 |
 | T-004 | 분석 JSON 스키마 및 지식 사전 초안 | S1 | T-001/T-002 완료 대기 | 미정 | 0 |
@@ -77,3 +77,5 @@
 - T-003 1차 커밋 `97178b6`. 보고서 14개 합성 사례/10개 신규 테스트, 전체 67개 및 블랙박스 17개 통과. 허용 5개 파일만 변경, clean 확인.
 - T-003 S0 수락 보완: URL hostname 검증, fixture 전체 기대값 검증, 지식 사전과 신개념 기준안 연결, 초기 분석 정답과 모델 성능 검증의 구분을 send로 요청. S1 레드팀 반려가 아닌 S2 산출물 수락 보완이므로 S1 승격 횟수와 무관. 아직 develop 미병합.
 - T-003 보완 Task task_95e9eb7d8090 / dispatch ctx_badfc7406e20, 동일 워크트리·Antigravity 자체 설정으로 ready 확인.
+- T-001: S2의 7c51734 PASS는 S0가 미수락. stop 후 fallback 실행, 복원된 임의 reason 노출을 임시 입력으로 직접 재현해 1차 반려. QA 정정 Task task_f96d2d5a539c / dispatch ctx_c96c105bd2f0, S1 수정 Task task_ca9aabb4ff9d / dispatch ctx_90cd73058b26.
+- T-001 수정 140fcdf 도착: 중단 직전 검사·고정 reason 복원 검증, 신규 회귀 2개 추가(개발 전체 68개+블랙박스 7개 통과 보고). S0가 diff 확인 후 QA에 최초 FAIL 증거 보존 및 같은 브랜치에서 140fcdf 재검증을 send. 아직 develop 미병합.
