@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -977,6 +978,123 @@ class BlackboxProgressCheckTests(unittest.TestCase):
         data_missing = json.loads(res_missing_cmd.stdout)
         task_check_missing = next(c for c in data_missing["checks"] if c["name"] == "orca_task_list")
         self.assertEqual(task_check_missing["status"], "error")
+
+    # --------------------------------------------------------------------------
+    # 11. Windows CP949 / Unicode Attack (RED Regression)
+    # --------------------------------------------------------------------------
+
+    def test_19_cp949_strict_unicode_board_fixture_attack(self):
+        """CLI under various encodings (cp949:strict, ascii:strict, utf-8, default, PYTHONUTF8) must handle middle dot (・), emoji, and Korean."""
+        if not self.mock_orca_exe:
+            self.skipTest("C# compiler required")
+        repo = os.path.join(self.test_dir, "cp949_attack_repo")
+        os.makedirs(repo)
+        c1 = self._init_git_repo(repo, branch="develop")
+        c2 = self._commit(repo, "feat: dev commit", "f2.txt", "2")
+        c3 = self._commit(repo, "test: qa commit", "f3.txt", "3")
+
+        # Fixture with Katakana middle dot (・), emoji (🔥, 🚀), and Korean in task title, status, and branch
+        expected_title = "특수문자・이모지 \U0001F525"
+        expected_status = f"진행 중 ({c2[:12]}, {c3[:12]}) 완료・진행 \U0001F680"
+        expected_branch = "dev・feature"
+        rows = [
+            f"| T-001 | {expected_title} | S2 QA | {expected_status} | {expected_branch} | 0 |"
+        ]
+        self._write_board(repo, rows)
+
+        # Encodings matrix to verify: cp949:strict, ascii:strict, utf-8:strict, default, PYTHONUTF8=1
+        encoding_cases = [
+            ("cp949:strict", {}),
+            ("ascii:strict", {}),
+            ("utf-8:strict", {}),
+            (None, {}),
+            (None, {"PYTHONUTF8": "1"}),
+        ]
+
+        for idx, (enc_val, extra_env) in enumerate(encoding_cases):
+            with self.subTest(ioencoding=enc_val, extra=extra_env):
+                env = dict(self.env)
+                if enc_val is not None:
+                    env["PYTHONIOENCODING"] = enc_val
+                else:
+                    env.pop("PYTHONIOENCODING", None)
+                env.update(extra_env)
+
+                # 1. JSON mode
+                safe_tag = f"case_{idx}_{re.sub(r'[^A-Za-z0-9_-]', '_', str(enc_val or 'default'))}"
+                cmd_json = [
+                    sys.executable, str(CLI_PATH),
+                    "--repo", repo,
+                    "--run", f"run_enc_{safe_tag}",
+                    "--orca-command", self.mock_orca_exe,
+                    "--json",
+                ]
+                proc = subprocess.run(cmd_json, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+                stdout_text = proc.stdout.decode("utf-8", errors="replace")
+                stderr_text = proc.stderr.decode("utf-8", errors="replace")
+
+                self.assertNotIn("UnicodeEncodeError", stderr_text)
+                self.assertNotIn("Traceback", stderr_text)
+                self.assertIn(proc.returncode, (0, 1), f"Unexpected returncode {proc.returncode}")
+                self.assertTrue(len(stdout_text) > 0, "stdout must not be empty")
+
+                # Verify machine-consumed JSON ASCII escaping perfectly restores original Unicode
+                data = json.loads(stdout_text)
+                self.assertEqual(data["schema_version"], 1)
+
+                finding_open = next((f for f in data["findings"] if f["code"] == "OPEN_BUT_INTEGRATED"), None)
+                self.assertIsNotNone(finding_open, "OPEN_BUT_INTEGRATED finding must be detected")
+                self.assertEqual(finding_open["evidence"]["board_status"], expected_status)
+
+                # 2. Text mode
+                cmd_text = [
+                    sys.executable, str(CLI_PATH),
+                    "--repo", repo,
+                    "--run", f"run_txt_{safe_tag}",
+                    "--orca-command", self.mock_orca_exe,
+                ]
+                proc_text = subprocess.run(cmd_text, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+                stderr_text_mode = proc_text.stderr.decode("utf-8", errors="replace")
+                self.assertNotIn("UnicodeEncodeError", stderr_text_mode)
+                self.assertNotIn("Traceback", stderr_text_mode)
+                self.assertIn(proc_text.returncode, (0, 1))
+
+    def test_20_s0_codex_integration_smoke(self):
+        """Read-only smoke test against S0 codex integration repository condition (67c8961)."""
+        s0_repo = Path("C:/Users/jeong/orca/workspaces/my-project/s0-codex")
+        if not s0_repo.is_dir() or not (s0_repo / ".git").exists():
+            self.skipTest("s0-codex repository workspace does not exist")
+
+        real_run = "run_548a284d59da"
+
+        # Check git status before execution
+        status_before = subprocess.check_output(
+            ["git", "-C", str(s0_repo), "status", "--porcelain"], text=True
+        )
+
+        res = self._run_cli([
+            "--repo", str(s0_repo),
+            "--run", real_run,
+            "--json",
+        ])
+
+        # Check git status after execution
+        status_after = subprocess.check_output(
+            ["git", "-C", str(s0_repo), "status", "--porcelain"], text=True
+        )
+        self.assertEqual(status_before, status_after, "s0-codex repository must remain completely unmodified")
+
+        self.assertIn(res.returncode, (0, 1))
+        self.assertNotIn("Traceback", res.stderr)
+        self.assertNotIn("UnicodeEncodeError", res.stderr)
+
+        data = json.loads(res.stdout)
+        self.assertEqual(data["schema_version"], 1)
+        self.assertEqual(data["run_id"], real_run)
+
+        # Check that json.loads faithfully decodes Korean strings from summary
+        summary_texts = [f["summary"] for f in data["findings"]]
+        self.assertTrue(any("반려" in s for s in summary_texts), "Korean characters in findings summary must be restored")
 
 
 if __name__ == "__main__":
