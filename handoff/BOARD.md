@@ -9,7 +9,7 @@
 | T-004 | 분석 JSON 스키마 및 합성 사전 기반 | S1 Sonnet high → S2 Antigravity | PASS・develop 병합 완료 | develop (개발 651cb84, QA a5d63c2, 병합 df7c360) | 0 |
 | 학습 T-001/T-003 | 병합 후 학습 문서 2개 | S3 Sonnet low | 2164224 정정 수락·develop 병합 47abdff | jeongujeong117-byte/t-001-003-learn | 해당 없음 |
 | T-005 | 읽기 전용 진행감독 CLI | S1 Sonnet medium → S2 Antigravity | S1 0b7b045 완료・S2 QA 진행 | jeongujeong117-byte/t-005-dev | 0 |
-| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | S1 283d62e 완료・QA 배정 준비 | jeongujeong117-byte/t-006-dev | 0 |
+| T-006 | 사용자 확정 지식5개 및 합성 사전 분리 | S1 Sonnet medium | S1 283d62e 완료・S2 QA 진행 | jeongujeong117-byte/t-006-dev | 0 |
 | S4 | 읽기 전용 진행감독관 1차 점검 | Sonnet low | 2차 감사 수락・로그 병합 완료 | jeongujeong117-byte/s4-audit | 해당 없음 |
 | 별도 | Instagram·X 수집 | 사용자 결정 | X 재크롤링 금지・Instagram 차단으로 재수집/재연결 금지 | 해당 없음 | 0 |
 
@@ -128,3 +128,4 @@
 - S4 2차5dbbd32 수락: T-004 통합/199개 정합, 로컬 master 변경/반려2회/수치감소 없음. T-005 미병합은 QA중 정상이며 오류로 취급하지 않음. 학습 starting 관측은 이후 ready/live/working 및 완료 보고로 해소. T-002 과거 retained/unverifiable 생존은 여전히 확인 못 함.
 - T-004 학습49bef5d 수락・develop 병합. 개발보고 필수필드15개 표기와 코드/QA16개 불일치를 문서에서 명시, 코드16개가 기준. 합성12개/T-006 사용자5개/미검증 LLM 경계를 확인. S4와 S3 완료 dispatch released 확인.
 - T-006 283d62e 허용6개만 변경・clean. 사용자5개/alias config 및 합성gold 불변 확인. S1은 processing216개/skip11, MCP포함 필수회귀 미실행이므로 QA에 명시. 신규모듈16개+기존모듈1개 증가=총17개 증가, 보고서의 신규17개 표현과 구분.
+- T-006 QA task_116fedbd0567 / ctx_a5f9e0a1ce7a, Antigravity t-006-qa ready. T-005 QA와 병행하며 결과 전 병합하지 않음.
